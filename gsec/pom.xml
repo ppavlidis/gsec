@@ -2,10 +2,29 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>pavlab</groupId>
-	<artifactId>gemma-gjsec</artifactId>
+	<artifactId>gemma-gsec</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<name>gjsec</name>
+	<name>gsec</name>
+	<organization>
+		<name>UBC Centre for High-throughput Biology</name>
+		<url>http://www.chibi.ubc.ca/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>The Apache Software License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<developers>
+		<developer>
+			<name>Paul Pavlidis</name>
+			<id>pavlidis</id>
+			<email>paul@chibi.ubc.ca</email>
+			<organization>University of British Columbia</organization>
+		</developer>
+	</developers>
 	<dependencies>
 		<dependency>
 			<groupId>baseCode</groupId>
@@ -239,7 +258,23 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
+	<distributionManagement>
+		<site>
+			<id>broca</id>
+			<name>broca</name>
+			<url>scpexe://otto.pavlab.chibi.ubc.ca:/space/gemmaData/baseCode-site</url>
+		</site>
+		<repository>
+			<id>repo</id>
+			<name>Pavlab</name>
+			<url>scpexe://otto.pavlab.chibi.ubc.ca:/space/maven2</url>
+		</repository>
+		<snapshotRepository>
+			<id>repo</id>
+			<name>Pavlab</name>
+			<url>scpexe://otto.pavlab.chibi.ubc.ca:/space/maven2</url>
+		</snapshotRepository>
+	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.0.7.RELEASE</spring.version>
