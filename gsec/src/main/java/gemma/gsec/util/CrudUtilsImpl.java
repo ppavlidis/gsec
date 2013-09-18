@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -75,7 +76,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
     public static boolean isTransient( Object entity ) {
         if ( entity == null ) return true;
         try {
-            return org.apache.commons.beanutils.BeanUtils.getSimpleProperty( entity, "id" ) == null;
+            return BeanUtils.getSimpleProperty( entity, "id" ) == null;
         } catch ( Exception e ) {
             throw new RuntimeException( e );
         }
