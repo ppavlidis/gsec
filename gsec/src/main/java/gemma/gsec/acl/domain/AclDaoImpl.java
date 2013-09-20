@@ -352,12 +352,17 @@ public class AclDaoImpl implements AclDao {
                 .merge( aclObjectIdentity );
 
         if ( acl.getParentAcl() != null ) {
+
+            if ( log.isTraceEnabled() )
+                log.trace( "       Updating ACL on parent: " + acl.getParentAcl().getObjectIdentity() );
+
             update( ( MutableAcl ) acl.getParentAcl() );
             this.getSessionFactory().getCurrentSession().evict( acl.getParentAcl() );
             aclObjectIdentity.setParentObject( convert( ( MutableAcl ) acl.getParentAcl() ) );
+            assert aclObjectIdentity.getParentObject() != null;
         } else {
-            // basically impossible to go from non-null to null, but just in case ...
-            aclObjectIdentity.setParentObject( null );
+            // should be impossible to go from non-null to null, but just in case ...
+            assert aclObjectIdentity.getParentObject() == null;
         }
 
         this.getSessionFactory().getCurrentSession().update( aclObjectIdentity );
@@ -382,11 +387,12 @@ public class AclDaoImpl implements AclDao {
         // these come back with the ace_order filled in.
         List<AccessControlEntry> entriesFromAcl = acl.getEntries();
 
-        // repopulate the ID of the SIDs.
-        log.trace( "Preparing to update " + entriesFromAcl.size() + " aces" );
+        // repopulate the ID of the SIDs. May not have any if this is a secured child.
+        if ( log.isTraceEnabled() && !entriesFromAcl.isEmpty() )
+            log.trace( "Preparing to update " + entriesFromAcl.size() + " aces on " + acl.getObjectIdentity() );
         try {
             for ( AccessControlEntry ace : entriesFromAcl ) {
-                log.trace( ace );
+                if ( log.isTraceEnabled() ) log.trace( ace );
                 AclSid sid = ( AclSid ) ace.getSid();
                 if ( sid.getId() == null ) {
                     AclEntry aace = ( AclEntry ) ace;
@@ -395,9 +401,9 @@ public class AclDaoImpl implements AclDao {
                 }
             }
         } catch ( IllegalAccessException e ) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
         // synched up with the ACL, partly
         AclObjectIdentity aclObjectIdentity = ( AclObjectIdentity ) acl.getObjectIdentity();
 

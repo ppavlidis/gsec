@@ -56,6 +56,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Adds security controls to newly created objects (including those created by updates to other objects via cascades),
@@ -103,10 +104,21 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * @throws Throwable
      */
     public final void doAclAdvice( JoinPoint jp, Object retValue ) throws Throwable {
+        //
 
         final Object[] args = jp.getArgs();
         Signature signature = jp.getSignature();
         final String methodName = signature.getName();
+
+        // Class<?>[] clazzes = new Class[jp.getArgs().length];
+        // for ( int i = 0; i < jp.getArgs().length; i++ ) {
+        // clazzes[i] = jp.getArgs().getClass();
+        // }
+        // Method m = signature.getDeclaringType().getDeclaredMethod( signature.getName(), clazzes );
+        // Transactional annotation = m.getAnnotation( Transactional.class );
+        // if ( annotation != null && !annotation.readOnly() ) {
+        // return;
+        // }
 
         assert args != null;
         final Object persistentObject = getPersistentObject( retValue, methodName, args );
@@ -561,7 +573,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
         if ( CrudUtilsImpl.methodIsDelete( methodName ) || CrudUtilsImpl.methodIsUpdate( methodName ) ) {
 
             /*
-             * Only deal with single-argument update methods.
+             * Only deal with single-argument update methods. MIGHT WANT TO RETURN THE FIRST ARGUMENT
              */
             if ( args.length > 1 ) return null;
 
@@ -692,7 +704,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
             if ( currentParentAcl != null && !currentParentAcl.equals( parentAcl ) ) {
                 throw new IllegalStateException( "Cannot change parentAcl on " + object
-                        + " once it has ben set: Current parent: " + currentParentAcl + " != Proposed parent:"
+                        + " once it has ben set:\n Current parent: " + currentParentAcl + " != \nProposed parent:"
                         + parentAcl );
             }
 
@@ -779,8 +791,8 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
              */
             if ( !specialCaseForAssociationFollow( object, propertyName )
                     && ( canSkipAssociationCheck( object, propertyName ) || !crudUtils.needCascade( methodName, cs ) ) ) {
-                if ( log.isTraceEnabled() )
-                    log.trace( "Skipping checking association: " + propertyName + " on " + object );
+                // if ( log.isTraceEnabled() )
+                // log.trace( "Skipping checking association: " + propertyName + " on " + object );
                 continue;
             }
 
@@ -788,21 +800,29 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
             Object associatedObject = null;
             try {
-                // FieldUtils DOES NOT WORK correctly with proxies?
+                // FieldUtils DOES NOT WORK correctly with proxies
                 associatedObject = getProperty( object, descriptor );
+            } catch ( LazyInitializationException e ) {
+                /*
+                 * This is not a problem. If this was reached via a create, the associated objects must not be new so
+                 * they should already have acls.
+                 */
+
+                /*
+                 * Well, that's the dream. We don't want warnings every time, that's for sure.
+                 */
+                if ( log.isTraceEnabled() )
+                    log.trace( "Association was unreachable during ACL association checking: " + propertyName + " on "
+                            + object );
+                return;
             } catch ( Exception e ) {
-                log.error( "Error while processing: " + object.getClass() + " --> " + propertyName );
-                throw ( new RuntimeException( e ) );
+                throw new RuntimeException( "Failure during association check of: " + propertyName + " on " + object, e );
             }
 
             if ( associatedObject == null ) continue;
 
-            log.trace( "Checking association: " + propertyName + " on " + object );
             if ( associatedObject instanceof Collection ) {
                 Collection<Object> associatedObjects = ( Collection<Object> ) associatedObject;
-
-                if ( log.isTraceEnabled() && associatedObjects.isEmpty() )
-                    log.trace( ".. but it was an empty collection" );
 
                 try {
                     for ( Object object2 : associatedObjects ) {
@@ -810,7 +830,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
                         if ( Securable.class.isAssignableFrom( object2.getClass() ) ) {
                             addOrUpdateAcl( null, ( Securable ) object2, parentAcl );
                         } else {
-                            if ( log.isTraceEnabled() ) log.trace( object2 + ": not securable, skipping" );
+                            // if ( log.isTraceEnabled() ) log.trace( object2 + ": not securable, skipping" );
                         }
                         processAssociations( methodName, object2, parentAcl );
                     }

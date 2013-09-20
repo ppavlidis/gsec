@@ -212,7 +212,26 @@ public class AclServiceImpl implements AclService {
      * MutableAcl)
      */
     @Override
-    public MutableAcl updateAcl( MutableAcl acl ) throws NotFoundException {
+    public MutableAcl updateAcl( final MutableAcl acl ) throws NotFoundException {
+        if ( TransactionSynchronizationManager.isActualTransactionActive() ) {
+            return doUpdateAcl( acl );
+        }
+
+        return transactionTemplate.execute( new TransactionCallback<MutableAcl>() {
+            @Override
+            public MutableAcl doInTransaction( TransactionStatus status ) {
+                // deals with cache.
+                return doUpdateAcl( acl );
+            }
+
+        } );
+    }
+
+    /**
+     * @param acl
+     * @return
+     */
+    private MutableAcl doUpdateAcl( MutableAcl acl ) {
         assert TransactionSynchronizationManager.isActualTransactionActive();
         Assert.notNull( acl.getId(), "Object Identity doesn't provide an identifier" );
         aclDao.update( acl );
