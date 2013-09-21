@@ -56,7 +56,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.GrantedAuthorityImpl;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Adds security controls to newly created objects (including those created by updates to other objects via cascades),
@@ -74,29 +73,23 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAware {
 
+    private static Log log = LogFactory.getLog( BaseAclAdvice.class );
+
+    // @Autowired
+    private AclService aclService;
+
     private BeanFactory beanFactory;
 
-    @Override
-    public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
-        this.beanFactory = beanFactory;
+    // @Autowired
+    private CrudUtils crudUtils;
 
-    }
+    private ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy = new ValueObjectAwareIdentityRetrievalStrategyImpl();
 
     @Override
     public void afterPropertiesSet() throws Exception {
         this.crudUtils = this.beanFactory.getBean( CrudUtils.class );
         this.aclService = this.beanFactory.getBean( AclService.class );
     }
-
-    private static Log log = LogFactory.getLog( BaseAclAdvice.class );
-
-    // @Autowired
-    private AclService aclService;
-
-    // @Autowired
-    private CrudUtils crudUtils;
-
-    private ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy = new ValueObjectAwareIdentityRetrievalStrategyImpl();
 
     /**
      * @param jp
@@ -153,12 +146,27 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
         this.aclService = aclService;
     }
 
+    @Override
+    public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
+        this.beanFactory = beanFactory;
+
+    }
+
     public void setObjectIdentityRetrievalStrategy( ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy ) {
         this.objectIdentityRetrievalStrategy = objectIdentityRetrievalStrategy;
     }
 
+    // from gemma reflectionutil
+    Object getProperty( Object object, PropertyDescriptor descriptor ) throws IllegalAccessException,
+            InvocationTargetException {
+        Method getter = descriptor.getReadMethod();
+        Object associatedObject = getter.invoke( object, new Object[] {} );
+        return associatedObject;
+    }
+
     /**
-     * Check for special cases of objects that don't need to be examined. Default implementation always returns false.
+     * Check for special cases of objects that don't need to be examined for associations at all, for efficiency when
+     * following associations. Default implementation always returns false.
      * 
      * @param object
      * @return
@@ -170,8 +178,8 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     /**
      * Check if the association may be skipped. Default implementation always returns false.
      * 
-     * @param object
-     * @param propertyName
+     * @param object the target object which has the property
+     * @param propertyName the name of the property to consider skipping
      * @return
      */
     protected boolean canSkipAssociationCheck( Object object, String propertyName ) {
@@ -179,7 +187,9 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     }
 
     /**
-     * Subclasses can modify this to address other cases. Default implementation is a no-op.
+     * Subclasses can modify this to address special cases. Default implementation is a no-op.
+     * <p>
+     * FIXME this might not be necessary.
      * 
      * @param acl may be modified by this call
      * @param parentAcl value may be changed by this call
@@ -215,15 +225,21 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     protected abstract String getUserName( Securable object );
 
     /**
-     * Called during create. Default implementation returns null. For some cases, we want to find the parent so we don't
-     * have to rely on updates later to catch it and fill it in. Implementers must decide which cases can be handled
-     * this way. Care is required: the parent might not be created yet, in which case the cascade to s is surely going
-     * to fix it later. The best situation is when s has an accessor to reach the parent.
+     * Called during create. Default implementation returns null unless the object is a SecuredChild, in which case it
+     * returns the value of s.getSecurityOwner() (which will be null unless it is filled in)
+     * <p>
+     * For some cases, we want to find the parent so we don't have to rely on updates later to catch it and fill it in.
+     * Implementers must decide which cases can be handled this way. Care is required: the parent might not be created
+     * yet, in which case the cascade to s is surely going to fix it later. The best situation is when s has an accessor
+     * to reach the parent.
      * 
      * @param s which might have a parent already in the system
      * @return
      */
     protected Acl locateParentAcl( SecuredChild s ) {
+        if ( s.getSecurityOwner() != null ) {
+            return this.getAclService().readAclById( makeObjectIdentity( s.getSecurityOwner() ) );
+        }
         return null;
     }
 
@@ -322,23 +338,32 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     }
 
     /**
+     * For cases in which the object is not a SecuredChild, but we still want to erase ACEs on it when it has a parent.
+     * Implementers will check the class of the object, and the class of the parent (e.g. using <code>Class.forName(
+     * parentAcl.getObjectIdentity().getType() )</code>) and decide what to do.
+     * 
      * @param object
      * @param parentAcl
-     * @return
+     * @return false if ACEs should be retained. True if ACEs should be removed (if possible).
      */
     protected boolean specialCaseToAllowRemovingAcesFromChild( Securable object, Acl parentAcl ) {
         return false;
-
     }
 
     /**
-     * Certain objects are not made public immediately on creation by administrators.
+     * Certain objects are not made public immediately on creation by administrators. The default implementation returns
+     * true if clazz is assignable to SecuredChild; otherwise false. Subclasses overriding this method should probably
+     * call super.specialCaseToKeepPrivateOnCreation()
      * 
-     * @param class1
-     * @return true if it's a special case to be kept private.
+     * @param clazz
+     * @return true if it's a special case to be kept private on creation.
      */
-    @SuppressWarnings("unused")
     protected boolean specialCaseToKeepPrivateOnCreation( Class<? extends Securable> clazz ) {
+
+        if ( SecuredChild.class.isAssignableFrom( clazz ) ) {
+            return true;
+        }
+
         return false;
 
     }
@@ -679,7 +704,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
             log.warn( "Could not clear aces on child" );
             log.warn( "Parent: " + parentAcl );
             log.warn( "Child: " + childAcl );
-            throw new IllegalStateException( "Could not clear aces on child: " + childAcl.getObjectIdentity() );
+            // throw new IllegalStateException( "Could not clear aces on child: " + childAcl.getObjectIdentity() );
 
         }
 
@@ -856,14 +881,6 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
                 processAssociations( methodName, associatedObject, parentAcl );
             }
         }
-    }
-
-    // from gemma reflectionutil
-    Object getProperty( Object object, PropertyDescriptor descriptor ) throws IllegalAccessException,
-            InvocationTargetException {
-        Method getter = descriptor.getReadMethod();
-        Object associatedObject = getter.invoke( object, new Object[] {} );
-        return associatedObject;
     }
 
     /**
