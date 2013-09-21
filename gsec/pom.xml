@@ -149,7 +149,7 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
-			<packaging>jar</packaging>
+			<type>jar</type>
 			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
