@@ -158,7 +158,7 @@ public class AclCollectionEntryVoter extends AbstractAclVoter {
      * java.lang.Object, java.util.Collection)
      */
     @Override
-    public int vote( Authentication authentication, Object object, Collection<ConfigAttribute> attributes ) {
+    public int vote( Authentication authentication, MethodInvocation object, Collection<ConfigAttribute> attributes ) {
 
         for ( ConfigAttribute attr : attributes ) {
 

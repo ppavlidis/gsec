@@ -54,7 +54,7 @@ import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -283,14 +283,14 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
          * All objects must have administration permissions on them.
          */
         if ( log.isDebugEnabled() ) log.debug( "Making administratable by GROUP_ADMIN: " + oi );
-        grant( acl, BasePermission.ADMINISTRATION, new AclGrantedAuthoritySid( new GrantedAuthorityImpl(
+        grant( acl, BasePermission.ADMINISTRATION, new AclGrantedAuthoritySid( new SimpleGrantedAuthority(
                 AuthorityConstants.ADMIN_GROUP_AUTHORITY ) ) );
 
         /*
          * Let agent read anything
          */
         if ( log.isDebugEnabled() ) log.debug( "Making readable by GROUP_AGENT: " + oi );
-        grant( acl, BasePermission.READ, new AclGrantedAuthoritySid( new GrantedAuthorityImpl(
+        grant( acl, BasePermission.READ, new AclGrantedAuthoritySid( new SimpleGrantedAuthority(
                 AuthorityConstants.AGENT_GROUP_AUTHORITY ) ) );
 
         /*
@@ -300,7 +300,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
         if ( makeAnonymousReadable ) {
             if ( log.isDebugEnabled() ) log.debug( "Making readable by IS_AUTHENTICATED_ANONYMOUSLY: " + oi );
-            grant( acl, BasePermission.READ, new AclGrantedAuthoritySid( new GrantedAuthorityImpl(
+            grant( acl, BasePermission.READ, new AclGrantedAuthoritySid( new SimpleGrantedAuthority(
                     AuthorityConstants.IS_AUTHENTICATED_ANONYMOUSLY ) ) );
         }
 

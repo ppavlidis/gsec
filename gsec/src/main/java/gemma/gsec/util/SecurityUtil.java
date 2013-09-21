@@ -29,7 +29,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-
 /**
  * Database-independent methods for ACLs
  * 
@@ -81,7 +80,7 @@ public class SecurityUtil {
 
     public static boolean isRunningAsAdmin() {
 
-        Collection<GrantedAuthority> authorities = getAuthentication().getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = getAuthentication().getAuthorities();
         assert authorities != null;
         for ( GrantedAuthority authority : authorities ) {
             if ( authority.getAuthority().equals( AuthorityConstants.RUN_AS_ADMIN_AUTHORITY ) ) {
@@ -140,7 +139,7 @@ public class SecurityUtil {
             return false;
         }
 
-        Collection<GrantedAuthority> authorities = getAuthentication().getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = getAuthentication().getAuthorities();
         assert authorities != null;
         for ( GrantedAuthority authority : authorities ) {
             if ( authority.getAuthority().equals( AuthorityConstants.ADMIN_GROUP_AUTHORITY ) ) {

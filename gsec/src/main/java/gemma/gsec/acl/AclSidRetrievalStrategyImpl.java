@@ -29,7 +29,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.util.Assert;
 
-
 /**
  * Customized to use our AclSid implementation.
  * 
@@ -51,8 +50,8 @@ public class AclSidRetrievalStrategyImpl implements SidRetrievalStrategy {
 
     @Override
     public List<Sid> getSids( Authentication authentication ) {
-        Collection<GrantedAuthority> authorities = roleHierarchy.getReachableGrantedAuthorities( authentication
-                .getAuthorities() );
+        Collection<? extends GrantedAuthority> authorities = roleHierarchy
+                .getReachableGrantedAuthorities( authentication.getAuthorities() );
         List<Sid> sids = new ArrayList<Sid>( authorities.size() + 1 );
 
         sids.add( new AclPrincipalSid( authentication ) );

@@ -19,11 +19,8 @@ import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
 import gemma.gsec.model.SecuredChild;
 
 import org.aopalliance.intercept.MethodInvocation;
-import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
-
 
 /**
  * Specialization to allow handling of SecuredChild.
@@ -45,19 +42,12 @@ public class AclEntryVoter extends org.springframework.security.acls.AclEntryVot
      * @see org.springframework.security.access.vote.AbstractAclVoter#getDomainObjectInstance(java.lang.Object)
      */
     @Override
-    protected Object getDomainObjectInstance( Object secureObject ) {
+    protected Object getDomainObjectInstance( MethodInvocation invocation ) {
         Object[] args;
         Class<?>[] params;
 
-        if ( secureObject instanceof MethodInvocation ) {
-            MethodInvocation invocation = ( MethodInvocation ) secureObject;
-            params = invocation.getMethod().getParameterTypes();
-            args = invocation.getArguments();
-        } else {
-            JoinPoint jp = ( JoinPoint ) secureObject;
-            params = ( ( CodeSignature ) jp.getStaticPart().getSignature() ).getParameterTypes();
-            args = jp.getArgs();
-        }
+        params = invocation.getMethod().getParameterTypes();
+        args = invocation.getArguments();
 
         for ( int i = 0; i < params.length; i++ ) {
             if ( getProcessDomainObjectClass().isAssignableFrom( params[i] ) ) {
