@@ -227,8 +227,8 @@
 				<dependencies>
 					<dependency>
 						<groupId>org.hibernate</groupId>
-						<artifactId>hibernate</artifactId>
-						<version>3.2.6.ga</version>
+						<artifactId>hibernate-core</artifactId>
+						<version>3.6.7.Final</version>
 						<type>jar</type>
 					</dependency>
 				</dependencies>
