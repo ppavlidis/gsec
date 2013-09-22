@@ -18,6 +18,7 @@
  */
 package gemma.gsec.acl.afterinvocation;
 
+import gemma.gsec.SecurityService;
 import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
 import gemma.gsec.model.Securable;
 
@@ -25,9 +26,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.acls.afterinvocation.AbstractAclProvider;
@@ -45,23 +48,16 @@ import org.springframework.security.core.Authentication;
  */
 public abstract class ByAssociationFilteringProvider<T extends Securable, A> extends AbstractAclProvider {
 
+    protected static final Log logger = LogFactory.getLog( ByAssociationFilteringProvider.class );
+
+    @Autowired
+    private SecurityService securityService;
+
     public ByAssociationFilteringProvider( AclService aclService, String processConfigAttribute,
             List<Permission> requirePermission ) {
         super( aclService, processConfigAttribute, requirePermission );
         this.setObjectIdentityRetrievalStrategy( new ValueObjectAwareIdentityRetrievalStrategyImpl() );
     }
-
-    protected static final Log logger = LogFactory.getLog( ByAssociationFilteringProvider.class );
-
-    /**
-     * Given one of the input objects (which is not securable) return the associated securable.
-     * 
-     * @param targetDomainObject
-     * @return
-     */
-    protected abstract T getAssociatedSecurable( Object targetDomainObject );
-
-    public abstract String getProcessConfigAttribute();
 
     /**
      * Decides whether user has access to object based on owning object (for composition relationships).
@@ -110,20 +106,18 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
                     filterer = new CollectionFilterer<A>( coll );
                 }
 
-                // Locate unauthorised Collection elements
+                Map<T, Boolean> hasPerms = getDomainObjectPermissionDecisions( authentication, filterer );
+
                 Iterator<A> collectionIter = filterer.iterator();
-
                 while ( collectionIter.hasNext() ) {
-
                     A targetDomainObject = collectionIter.next();
                     T domainObject = getAssociatedSecurable( targetDomainObject );
-
                     boolean hasPermission = false;
 
                     if ( domainObject == null ) {
                         hasPermission = true;
                     } else {
-                        hasPermission = hasPermission( authentication, domainObject );
+                        hasPermission = hasPerms.get( domainObject );
                     }
 
                     if ( !hasPermission ) {
@@ -148,6 +142,20 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
         return returnedObject;
     }
 
+    public abstract String getProcessConfigAttribute();
+
+    /**
+     * This base implementation supports any type of class, because it does not query the presented secure object.
+     * Subclasses can provide a more specific implementation.
+     * 
+     * @param clazz the secure object
+     * @return always <code>true</code>
+     */
+    @Override
+    public boolean supports( Class<?> clazz ) {
+        return true;
+    }
+
     /**
      * Called by the AbstractSecurityInterceptor at startup time to determine of AfterInvocationManager can process the
      * ConfigAttribute.
@@ -164,15 +172,34 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
     }
 
     /**
-     * This base implementation supports any type of class, because it does not query the presented secure object.
-     * Subclasses can provide a more specific implementation.
+     * Given one of the input objects (which is not securable) return the associated securable.
      * 
-     * @param clazz the secure object
-     * @return always <code>true</code>
+     * @param targetDomainObject
+     * @return
      */
-    @Override
-    public boolean supports( Class<?> clazz ) {
-        return true;
+    protected abstract T getAssociatedSecurable( Object targetDomainObject );
+
+    /**
+     * Save time by getting the associated (parent) domain objects. Often there is just one; or a small number compared
+     * to the large number of targetdomainobjects.
+     * 
+     * @param authentication
+     * @param filterer
+     * @return
+     */
+    private Map<T, Boolean> getDomainObjectPermissionDecisions( Authentication authentication, Filterer<A> filterer ) {
+
+        // collect up the securables.
+        Iterator<A> collectionIter = filterer.iterator();
+        Collection<T> domainObjects = new HashSet<>();
+        while ( collectionIter.hasNext() ) {
+            A targetDomainObject = collectionIter.next();
+            T domainObject = getAssociatedSecurable( targetDomainObject );
+            domainObjects.add( domainObject );
+        }
+
+        Map<T, Boolean> hasPerm = securityService.hasPermission( domainObjects, this.requirePermission, authentication );
+        return hasPerm;
     }
 
 }

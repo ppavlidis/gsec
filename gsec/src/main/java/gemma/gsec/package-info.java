@@ -39,7 +39,7 @@
  * 
  * <h2>TODO</h2>
  * <ul>
- * <li>The special AclPrincipalSid and AclGrantedAuthoritySid might not be needed, to be replaced with the genric PrincipalSid and GrantedAuthoritySid from spring security. This would also mean some of the other classes can be reverted to the generic ones provided from spring security.
+ * <li>The special AclPrincipalSid and AclGrantedAuthoritySid might not be needed, to be replaced with the generic PrincipalSid and GrantedAuthoritySid from spring security. This would also mean some of the other classes can be reverted to the generic ones provided from spring security.
  * <li>Provide a base implementation of SecurityService.
  * 
  */

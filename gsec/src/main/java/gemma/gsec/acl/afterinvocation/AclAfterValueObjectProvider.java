@@ -34,7 +34,6 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
-
 /**
  * Security check for reading value objects. Also overrides default behaviour by returning null, rather than throwing an
  * access denied exception.
@@ -74,7 +73,7 @@ public class AclAfterValueObjectProvider extends
              */
             SecureValueObject svo = ( SecureValueObject ) returnedObject;
 
-            boolean hasPermission = securityService.hasPermission( svo, requirePermission, authentication );
+            boolean hasPermission = securityService.hasPermissionVO( svo, requirePermission, authentication );
 
             if ( !hasPermission ) return false;
 
@@ -90,7 +89,7 @@ public class AclAfterValueObjectProvider extends
                 } else {
                     List<Permission> writePermissions = new ArrayList<Permission>();
                     writePermissions.add( BasePermission.WRITE );
-                    svo.setUserCanWrite( securityService.hasPermission( svo, writePermissions, authentication ) );
+                    svo.setUserCanWrite( securityService.hasPermissionVO( svo, writePermissions, authentication ) );
                 }
             }
             return svo;

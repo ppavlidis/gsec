@@ -57,6 +57,9 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
 
     protected static final Log logger = LogFactory.getLog( AclAfterFilterValueObjectCollectionProvider.class );
 
+    @Autowired
+    private SecurityService securityService;
+
     /**
      * @param aclService
      * @param requirePermission
@@ -66,9 +69,6 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
         this.setObjectIdentityRetrievalStrategy( new ValueObjectAwareIdentityRetrievalStrategyImpl() );
 
     }
-
-    @Autowired
-    private SecurityService securityService;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -113,7 +113,7 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                     securablesToFilter.add( ( SecureValueObject ) domainObject );
                 }
 
-                Map<SecureValueObject, Boolean> hasPerm = securityService.hasPermission( securablesToFilter,
+                Map<SecureValueObject, Boolean> hasPerm = securityService.hasPermissionVO( securablesToFilter,
                         this.requirePermission, authentication );
 
                 for ( SecureValueObject s : hasPerm.keySet() ) {
@@ -146,7 +146,7 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                 if ( !userIsAdmin && !requirePermission.contains( BasePermission.WRITE ) ) {
                     List<Permission> writePermissions = new ArrayList<Permission>();
                     writePermissions.add( BasePermission.WRITE );
-                    canWrite = securityService.hasPermission( securablesToFilter, this.requirePermission,
+                    canWrite = securityService.hasPermissionVO( securablesToFilter, this.requirePermission,
                             authentication );
                 }
 

@@ -49,16 +49,16 @@ import org.springframework.security.core.Authentication;
  */
 public class AclAfterFilterCollectionForUserOwnedData extends AbstractAclProvider {
 
+    private Log log = LogFactory.getLog( this.getClass() );
+
+    @Autowired
+    private SecurityService securityService;
+
     public AclAfterFilterCollectionForUserOwnedData( AclService aclService, List<Permission> requirePermission ) {
         super( aclService, "AFTER_ACL_FILTER_USER_OWNED_DATA", requirePermission );
         this.setObjectIdentityRetrievalStrategy( new ValueObjectAwareIdentityRetrievalStrategyImpl() );
 
     }
-
-    private Log log = LogFactory.getLog( this.getClass() );
-
-    @Autowired
-    private SecurityService securityService;
 
     /*
      * (non-Javadoc)

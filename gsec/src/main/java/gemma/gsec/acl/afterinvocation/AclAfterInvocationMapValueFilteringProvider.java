@@ -36,7 +36,6 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
-
 /**
  * Filter a one-to-one map where the keys are NON-SECURABLE and the values ARE securable (or at least, can be). The
  * values can be a mixture of securable or non-securable. If you are using a map where both they keys and values are

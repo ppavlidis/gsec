@@ -39,7 +39,6 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
-
 /**
  * Filter out public {@link Securables}s, leaving only ones that the user owns and can edit. This is used for the
  * "my data" list. Data sets that are only readable are omitted.
@@ -50,16 +49,16 @@ import org.springframework.security.core.Authentication;
  */
 public class AclAfterFilterCollectionForMyData extends AbstractAclProvider {
 
+    private Log log = LogFactory.getLog( this.getClass() );
+
+    @Autowired
+    private SecurityService securityService;
+
     public AclAfterFilterCollectionForMyData( AclService aclService, List<Permission> requirePermission ) {
         super( aclService, "AFTER_ACL_FILTER_MY_DATA", requirePermission );
         this.setObjectIdentityRetrievalStrategy( new ValueObjectAwareIdentityRetrievalStrategyImpl() );
 
     }
-
-    private Log log = LogFactory.getLog( this.getClass() );
-
-    @Autowired
-    private SecurityService securityService;
 
     /*
      * (non-Javadoc)

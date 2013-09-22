@@ -30,7 +30,6 @@ import org.springframework.security.acls.model.Sid;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
-
 /**
  * @author paul
  * @version $Id: SecurityService.java,v 1.98 2013/09/14 16:56:03 paul Exp $
@@ -212,7 +211,16 @@ public interface SecurityService {
      * @param authentication
      * @return
      */
-    public Map<SecureValueObject, Boolean> hasPermission( Collection<SecureValueObject> svos,
+    public Map<SecureValueObject, Boolean> hasPermissionVO( Collection<SecureValueObject> svos,
+            List<Permission> requiredPermissions, Authentication authentication );
+
+    /**
+     * @param svos
+     * @param requiredPermissions
+     * @param authentication
+     * @return
+     */
+    public <T extends Securable> Map<T, Boolean> hasPermission( Collection<T> sos,
             List<Permission> requiredPermissions, Authentication authentication );
 
     /**
@@ -221,7 +229,7 @@ public interface SecurityService {
      * @param authentication
      * @return
      */
-    public boolean hasPermission( SecureValueObject svo, List<Permission> requiredPermissions,
+    public boolean hasPermissionVO( SecureValueObject svo, List<Permission> requiredPermissions,
             Authentication authentication );
 
     /**

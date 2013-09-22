@@ -39,7 +39,6 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
-
 /**
  * Filter out public {@link Securables}s, leaving only ones that the user specifically can view but aren't public. This
  * includes data sets that are read-only for the user, e.g. shared by another user
@@ -50,16 +49,16 @@ import org.springframework.security.core.Authentication;
  */
 public class AclAfterFilterCollectionForMyPrivateData extends AbstractAclProvider {
 
+    private Log log = LogFactory.getLog( this.getClass() );
+
+    @Autowired
+    private SecurityService securityService;
+
     public AclAfterFilterCollectionForMyPrivateData( AclService aclService, List<Permission> requirePermission ) {
         super( aclService, "AFTER_ACL_FILTER_MY_PRIVATE_DATA", requirePermission );
         this.setObjectIdentityRetrievalStrategy( new ValueObjectAwareIdentityRetrievalStrategyImpl() );
 
     }
-
-    private Log log = LogFactory.getLog( this.getClass() );
-
-    @Autowired
-    private SecurityService securityService;
 
     /*
      * (non-Javadoc)
@@ -119,7 +118,6 @@ public class AclAfterFilterCollectionForMyPrivateData extends AbstractAclProvide
                 /*
                  * Do it like this cuz it's wayyyy faster.
                  */
-                // Map<Securable, Boolean> ownership = securityService.areOwnedByCurrentUser( securablesToFilter );
                 Map<Securable, Boolean> ownership = securityService
                         .areNonPublicButReadableByCurrentUser( securablesToFilter );
 
