@@ -206,13 +206,18 @@ public interface SecurityService {
     public abstract Map<Securable, Sid> getOwners( Collection<? extends Securable> securables );
 
     /**
+     * Advanced. Determine if the given securables have the required permissions under the given authentication.
+     * <p>
+     * Implementation note: This deals with lists to avoid having to compute hashcodes on securables that might not be
+     * thawed. But we do avoid fetching ACLs that are not needed.
+     * 
      * @param svos
      * @param requiredPermissions
      * @param authentication
      * @return
      */
-    public Map<SecureValueObject, Boolean> hasPermissionVO( Collection<SecureValueObject> svos,
-            List<Permission> requiredPermissions, Authentication authentication );
+    public <T extends Securable> List<Boolean> hasPermission( List<T> sos, List<Permission> requiredPermissions,
+            Authentication authentication );
 
     /**
      * @param svos
@@ -220,7 +225,7 @@ public interface SecurityService {
      * @param authentication
      * @return
      */
-    public <T extends Securable> Map<T, Boolean> hasPermission( Collection<T> sos,
+    public Map<SecureValueObject, Boolean> hasPermissionVO( Collection<SecureValueObject> svos,
             List<Permission> requiredPermissions, Authentication authentication );
 
     /**

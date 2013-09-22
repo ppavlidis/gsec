@@ -22,11 +22,11 @@ import gemma.gsec.SecurityService;
 import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
 import gemma.gsec.model.Securable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -71,7 +71,7 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
      */
     @Override
     @SuppressWarnings("unchecked")
-    public final Object decide( Authentication authentication, Object object, Collection<ConfigAttribute> config,
+    public final Object decide( final Authentication authentication, Object object, Collection<ConfigAttribute> config,
             Object returnedObject ) throws AccessDeniedException {
 
         Iterator<ConfigAttribute> iter = config.iterator();
@@ -106,9 +106,9 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
                     filterer = new CollectionFilterer<A>( coll );
                 }
 
-                Map<T, Boolean> hasPerms = getDomainObjectPermissionDecisions( authentication, filterer );
-
+                List<Boolean> hasPerms = getDomainObjectPermissionDecisions( authentication, filterer );
                 Iterator<A> collectionIter = filterer.iterator();
+                int i = 0;
                 while ( collectionIter.hasNext() ) {
                     A targetDomainObject = collectionIter.next();
                     T domainObject = getAssociatedSecurable( targetDomainObject );
@@ -117,7 +117,7 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
                     if ( domainObject == null ) {
                         hasPermission = true;
                     } else {
-                        hasPermission = hasPerms.get( domainObject );
+                        hasPermission = hasPerms.get( i );
                     }
 
                     if ( !hasPermission ) {
@@ -127,7 +127,9 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
                             logger.debug( "Principal is NOT authorised for element: " + targetDomainObject );
                         }
                     }
+                    i++;
                 }
+
                 if ( wasSingleton ) {
                     if ( ( ( Collection<A> ) filterer.getFilteredObject() ).size() == 1 ) {
                         return ( ( Collection<A> ) filterer.getFilteredObject() ).iterator().next();
@@ -182,23 +184,25 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
     /**
      * Save time by getting the associated (parent) domain objects. Often there is just one; or a small number compared
      * to the large number of targetdomainobjects.
+     * <p>
+     * Problem: I wanted to use a Set so I would check permissions for the minimum number of objects. However, we're not
+     * in a transaction here, so the Securables are often proxies. So we can't hash them.
      * 
      * @param authentication
      * @param filterer
-     * @return
+     * @return list of booleans in same order as the filterer's iterator. True if haspermissions, false otherwise.
      */
-    private Map<T, Boolean> getDomainObjectPermissionDecisions( Authentication authentication, Filterer<A> filterer ) {
-
+    private List<Boolean> getDomainObjectPermissionDecisions( Authentication authentication, Filterer<A> filterer ) {
         // collect up the securables.
         Iterator<A> collectionIter = filterer.iterator();
-        Collection<T> domainObjects = new HashSet<>();
+        List<T> domainObjects = new ArrayList<>( 100 );
         while ( collectionIter.hasNext() ) {
             A targetDomainObject = collectionIter.next();
             T domainObject = getAssociatedSecurable( targetDomainObject );
             domainObjects.add( domainObject );
         }
 
-        Map<T, Boolean> hasPerm = securityService.hasPermission( domainObjects, this.requirePermission, authentication );
+        List<Boolean> hasPerm = securityService.hasPermission( domainObjects, this.requirePermission, authentication );
         return hasPerm;
     }
 
