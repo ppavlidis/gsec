@@ -49,7 +49,6 @@ import org.springframework.security.core.Authentication;
 public abstract class ByAssociationFilteringProvider<T extends Securable, A> extends AbstractAclProvider {
 
     protected static final Log logger = LogFactory.getLog( ByAssociationFilteringProvider.class );
-
     @Autowired
     private SecurityService securityService;
 
@@ -107,28 +106,7 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
                 }
 
                 List<Boolean> hasPerms = getDomainObjectPermissionDecisions( authentication, filterer );
-                Iterator<A> collectionIter = filterer.iterator();
-                int i = 0;
-                while ( collectionIter.hasNext() ) {
-                    A targetDomainObject = collectionIter.next();
-                    T domainObject = getAssociatedSecurable( targetDomainObject );
-                    boolean hasPermission = false;
-
-                    if ( domainObject == null ) {
-                        hasPermission = true;
-                    } else {
-                        hasPermission = hasPerms.get( i );
-                    }
-
-                    if ( !hasPermission ) {
-                        filterer.remove( targetDomainObject );
-
-                        if ( logger.isDebugEnabled() ) {
-                            logger.debug( "Principal is NOT authorised for element: " + targetDomainObject );
-                        }
-                    }
-                    i++;
-                }
+                filter( filterer, hasPerms );
 
                 if ( wasSingleton ) {
                     if ( ( ( Collection<A> ) filterer.getFilteredObject() ).size() == 1 ) {
@@ -206,4 +184,30 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
         return hasPerm;
     }
 
+    /**
+     * @param filterer
+     * @param hasPerms
+     */
+    private void filter( Filterer<A> filterer, List<Boolean> hasPerms ) {
+        int i = 0;
+        for ( A targetDomainObject : filterer ) {
+            T domainObject = getAssociatedSecurable( targetDomainObject );
+            boolean hasPermission = false;
+
+            if ( domainObject == null ) {
+                hasPermission = true;
+            } else {
+                hasPermission = hasPerms.get( i );
+            }
+
+            if ( !hasPermission ) {
+                filterer.remove( targetDomainObject );
+
+                if ( logger.isDebugEnabled() ) {
+                    logger.debug( "Principal is NOT authorised for element: " + targetDomainObject );
+                }
+            }
+            i++;
+        }
+    }
 }

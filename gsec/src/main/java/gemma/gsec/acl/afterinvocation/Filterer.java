@@ -24,26 +24,29 @@ import java.util.Iterator;
  * @author Paulo Neves
  * @version $Id: Filterer.java,v 1.3 2010/03/11 03:41:30 paul Exp $
  */
-public interface Filterer<T> {
+interface Filterer<T> extends Iterable<T> {
+    // ~ Methods
+    // ========================================================================================================
 
     /**
      * Gets the filtered collection or array.
      * 
      * @return the filtered collection or array
      */
-    public Object getFilteredObject();
+    Object getFilteredObject();
 
     /**
      * Returns an iterator over the filtered collection or array.
      * 
      * @return an Iterator
      */
-    public Iterator<T> iterator();
+    @Override
+    Iterator<T> iterator();
 
     /**
      * Removes the the given object from the resulting list.
      * 
      * @param object the object to be removed
      */
-    public void remove( T object );
+    void remove( T object );
 }

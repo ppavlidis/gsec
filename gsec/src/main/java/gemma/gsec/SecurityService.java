@@ -52,8 +52,7 @@ public interface SecurityService {
      * @param securables
      * @return
      */
-    public abstract Map<Securable, Boolean> areNonPublicButReadableByCurrentUser(
-            Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Map<T, Boolean> areNonPublicButReadableByCurrentUser( Collection<T> securables );
 
     /**
      * A securable is considered "owned" if 1) the user is the actual owner assigned in the ACL or 2) the user is an
@@ -62,7 +61,7 @@ public interface SecurityService {
      * @param securables
      * @return
      */
-    public abstract Map<Securable, Boolean> areOwnedByCurrentUser( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Map<T, Boolean> areOwnedByCurrentUser( Collection<T> securables );
 
     /**
      * @param securables
@@ -71,20 +70,20 @@ public interface SecurityService {
      *         {@link gemma.gsec.acl.voter.AclCollectionEntryVoter AclCollectionEntryVoter}
      */
     @Secured({ "ACL_SECURABLE_COLLECTION_READ" })
-    public abstract java.util.Map<Securable, Boolean> arePrivate( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Map<T, Boolean> arePrivate( Collection<T> securables );
 
     /**
      * @throws AuthorizationServiceException if the collection is empty, see comments in
      *         {@link gemma.gsec.acl.voter.AclCollectionEntryVoter AclCollectionEntryVoter}
      */
     @Secured({ "ACL_SECURABLE_COLLECTION_READ" })
-    public abstract Map<Securable, Boolean> areShared( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Map<T, Boolean> areShared( Collection<T> securables );
 
     /**
      * @param securables
      * @return the subset which are private, if any
      */
-    public abstract Collection<Securable> choosePrivate( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Collection<T> choosePrivate( Collection<T> securables );
 
     /**
      * @param securables
@@ -93,7 +92,7 @@ public interface SecurityService {
      *         {@link gemma.gsec.acl.voter.AclCollectionEntryVoter AclCollectionEntryVoter}
      */
     @Secured({ "ACL_SECURABLE_COLLECTION_READ" })
-    public abstract Collection<Securable> choosePublic( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Collection<T> choosePublic( Collection<T> securables );
 
     /**
      * If the group already exists, an exception will be thrown.
@@ -125,10 +124,10 @@ public interface SecurityService {
      * Note that this method cannot be secured, but as it only reads permissions on securables already in scope, it is
      * safe.
      * 
-     * @param securables
+     * @param securables, which could be securedvalueobjects
      * @return
      */
-    public Map<Securable, Acl> getAcls( Collection<? extends Securable> securables );
+    public <T extends Securable> Map<T, Acl> getAcls( Collection<T> securables );
 
     /**
      * We make this available to anonymous
@@ -159,7 +158,7 @@ public interface SecurityService {
      *         {@link gemma.gsec.acl.voter.AclCollectionEntryVoter AclCollectionEntryVoter}
      */
     @Secured({ "ACL_SECURABLE_COLLECTION_READ" })
-    public abstract Map<Securable, Collection<String>> getGroupsEditableBy( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Map<T, Collection<String>> getGroupsEditableBy( Collection<T> securables );
 
     /**
      * @param s
@@ -173,7 +172,7 @@ public interface SecurityService {
      * @return
      */
     @Secured({ "ACL_SECURABLE_COLLECTION_READ" })
-    public abstract Map<Securable, Collection<String>> getGroupsReadableBy( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Map<T, Collection<String>> getGroupsReadableBy( Collection<T> securables );
 
     /**
      * @param s
@@ -203,7 +202,7 @@ public interface SecurityService {
      * @throws AccessDeniedException if the current user is not allowed to access the information.
      */
     @Secured("ACL_SECURABLE_COLLECTION_READ")
-    public abstract Map<Securable, Sid> getOwners( Collection<? extends Securable> securables );
+    public abstract <T extends Securable> Map<T, Sid> getOwners( Collection<T> securables );
 
     /**
      * Advanced. Determine if the given securables have the required permissions under the given authentication.

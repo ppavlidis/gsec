@@ -20,7 +20,6 @@ package gemma.gsec.acl.afterinvocation;
 
 import gemma.gsec.SecurityService;
 import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
-import gemma.gsec.model.Securable;
 import gemma.gsec.model.SecureValueObject;
 import gemma.gsec.util.SecurityUtil;
 
@@ -134,10 +133,10 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                 StopWatch timer = new StopWatch();
                 timer.start();
 
-                Map<Securable, Acl> acls = securityService.getAcls( ( Collection<SecureValueObject> ) filterer
+                Map<SecureValueObject, Acl> acls = securityService.getAcls( ( Collection<SecureValueObject> ) filterer
                         .getFilteredObject() );
 
-                Map<Securable, Boolean> areOwnedByCurrentUser = securityService
+                Map<SecureValueObject, Boolean> areOwnedByCurrentUser = securityService
                         .areOwnedByCurrentUser( ( Collection<SecureValueObject> ) filterer.getFilteredObject() );
                 boolean userIsAdmin = SecurityUtil.isUserAdmin();
 
@@ -150,24 +149,22 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                             authentication );
                 }
 
-                for ( Securable s : acls.keySet() ) {
+                for ( SecureValueObject svo : acls.keySet() ) {
 
                     /*
                      * Populate optional fields in the ValueObject.
                      */
 
-                    SecureValueObject svo = ( SecureValueObject ) s;
-
                     // this should be fast, but could be even faster.
-                    Acl acl = acls.get( s );
+                    Acl acl = acls.get( svo );
                     svo.setIsPublic( !SecurityUtil.isPrivate( acl ) );
                     svo.setIsShared( SecurityUtil.isShared( acl ) );
-                    svo.setUserOwned( areOwnedByCurrentUser.get( s ) );
+                    svo.setUserOwned( areOwnedByCurrentUser.get( svo ) );
 
                     if ( svo.getUserOwned() || userIsAdmin || requirePermission.contains( BasePermission.WRITE ) ) {
                         svo.setUserCanWrite( true );
                     } else {
-                        svo.setUserCanWrite( canWrite.containsKey( s ) && canWrite.get( s ) );
+                        svo.setUserCanWrite( canWrite.containsKey( svo ) && canWrite.get( svo ) );
                     }
                 }
 

@@ -70,7 +70,7 @@ public class AclDaoImpl implements AclDao {
     /*
      * Used for fetching ACLs. 50 is the value used by the default spring implementation.
      */
-    private int batchSize = 50;
+    private int batchSize = 100;
 
     @Autowired
     private SessionFactory sessionFactory;
