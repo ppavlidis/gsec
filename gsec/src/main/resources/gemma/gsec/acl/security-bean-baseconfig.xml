@@ -21,20 +21,20 @@
 		</constructor-arg>
 	</bean>
 
+	<bean id="permissionEvaluator" class="org.springframework.security.acls.AclPermissionEvaluator">
+		<constructor-arg>
+			<ref bean="aclService" />
+		</constructor-arg>
+		<property name="sidRetrievalStrategy" ref="sidRetrievalStrategy" />
+		<property name="objectIdentityRetrievalStrategy">
+			<bean class="gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl" />
+		</property>
+	</bean>
+
 	<!-- needed for the use of @Pre... and @Post... -->
 	<bean id="securityExpressionHandler" class="org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler">
 		<property name="roleHierarchy" ref="roleHierarchy" />
-		<property name="permissionEvaluator">
-			<bean class="org.springframework.security.acls.AclPermissionEvaluator">
-				<constructor-arg>
-					<ref bean="aclService" />
-				</constructor-arg>
-				<property name="sidRetrievalStrategy" ref="sidRetrievalStrategy" />
-				<property name="objectIdentityRetrievalStrategy">
-					<bean class="gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl" />
-				</property>
-			</bean>
-		</property>
+		<property name="permissionEvaluator" ref="permissionEvaluator" />
 	</bean>
 
 
