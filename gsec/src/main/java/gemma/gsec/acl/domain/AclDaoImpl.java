@@ -284,7 +284,6 @@ public class AclDaoImpl implements AclDao {
                 // Ensure any cached element supports all the requested SIDs
                 // (they should always, as our base impl doesn't filter on SID)
                 if ( acl != null ) {
-
                     result.put( acl.getObjectIdentity(), acl );
                     aclFound = true;
 
@@ -468,32 +467,59 @@ public class AclDaoImpl implements AclDao {
 
         final Map<Serializable, Acl> results = new HashMap<Serializable, Acl>();
 
+        Set<String> types = new HashSet<>();
+        Set<Serializable> ids = new HashSet<>();
+        for ( ObjectIdentity oi : objectIdentities ) {
+            types.add( oi.getType() );
+            ids.add( oi.getIdentifier() );
+        }
+
         // possibly has no entries yet, so left outer join?
+        Session session = this.getSessionFactory().getCurrentSession();
         StringBuilder buf = new StringBuilder( "select o from AclObjectIdentity o left outer join o.entries e  where " );
 
-        for ( int i = 1; i <= objectIdentities.size(); i++ ) {
-            buf.append( " (o.identifier=? and o.type=?)" );
-            if ( i < objectIdentities.size() ) {
-                buf.append( " or" );
+        Query query = null;
+        if ( types.size() == 1 ) {
+            /*
+             * if there is just one type, we can pull that out of the or clause and make it an 'in'
+             */
+            buf.append( " o.type=:type and o.identifier in (:ids) order by o.identifier asc, e.aceOrder asc" );
+            query = session.createQuery( buf.toString() ).setReadOnly( true );
+            query.setParameter( "type", types.iterator().next() );
+            query.setParameterList( "ids", ids );
+        } else {
+            log.info( "Querying for more than on OI type" );
+            int numClauses = 0;
+            for ( int i = 1; i <= objectIdentities.size(); i++ ) {
+                buf.append( " (o.identifier=? and o.type=?)" );
+                if ( i < objectIdentities.size() ) {
+                    buf.append( " or" );
+                }
+                numClauses++;
+            }
+
+            assert numClauses == objectIdentities.size();
+
+            /*
+             * We do not add a clause for the sids! That would require a more complex caching scheme.
+             */
+            buf.append( " order by o.identifier asc, e.aceOrder asc" );
+
+            query = session.createQuery( buf.toString() ).setReadOnly( true );
+            int i = 0; // 1 is for jdbc...so we have to subtract 1 than used in BasicLookupStrategy
+            for ( ObjectIdentity oi : objectIdentities ) {
+                query.setLong( ( 2 * i ), ( Long ) oi.getIdentifier() );
+                query.setString( ( 2 * i ) + 1, oi.getType() );
+                i++;
             }
         }
 
-        buf.append( " order by o.identifier asc, e.aceOrder asc" );
-
-        /*
-         * We do not add a clause for the sids! That would require a more complex caching scheme.
-         */
-        Session session = this.getSessionFactory().getCurrentSession();
-
-        Query query = session.createQuery( buf.toString() ).setReadOnly( true );
-        int i = 0; // 1 is for jdbc...so we have to subtract 1 than used in BasicLookupStrategy
-        for ( ObjectIdentity oi : objectIdentities ) {
-            query.setLong( ( 2 * i ), ( Long ) oi.getIdentifier() );
-            query.setString( ( 2 * i ) + 1, oi.getType() );
-            i++;
-        }
-
         List<?> queryR = query.list();
+
+        if ( queryR.size() < objectIdentities.size() ) {
+            log.warn( "Expected " + objectIdentities.size() + " objectidentities from db, got " + queryR.size()
+                    + "from db" );
+        }
 
         Set<Long> parentIdsToLookup = new HashSet<>();
         for ( Object o : queryR ) {
@@ -505,30 +531,28 @@ public class AclDaoImpl implements AclDao {
 
             if ( parentObjectIdentity != null ) {
 
-                if ( results.containsKey( parentObjectIdentity.getId() ) ) {
-                    // it is possible cache contains the parent, without yet containing the child
-                    continue;
+                if ( !results.containsKey( parentObjectIdentity.getId() ) ) {
+
+                    // try to find parent in the cache
+                    MutableAcl cachedParent = aclCache.getFromCache( parentObjectIdentity.getId() );
+
+                    if ( cachedParent == null ) {
+
+                        parentIdsToLookup.add( new Long( parentObjectIdentity.getId() ) );
+
+                        parentAcl = new AclImpl( parentObjectIdentity, aclAuthorizationStrategy, /* parent acl */null );
+
+                        parentAcl.getEntries()
+                                .addAll( AclEntry.convert( new ArrayList<>( oi.getEntries() ), parentAcl ) );
+                    } else {
+                        parentAcl = ( AclImpl ) cachedParent;
+
+                        // Pop into the acls map, so our convert method doesn't
+                        // need to deal with an unsynchronized AclCache, even though it might not be used directly.
+
+                        results.put( cachedParent.getId(), cachedParent );
+                    }
                 }
-
-                // try to find parent in the cache
-                MutableAcl cachedParent = aclCache.getFromCache( parentObjectIdentity.getId() );
-
-                if ( cachedParent == null ) {
-
-                    parentIdsToLookup.add( new Long( parentObjectIdentity.getId() ) );
-
-                    parentAcl = new AclImpl( parentObjectIdentity, aclAuthorizationStrategy, /* parent acl */null );
-
-                    parentAcl.getEntries().addAll( AclEntry.convert( new ArrayList<>( oi.getEntries() ), parentAcl ) );
-                } else {
-                    parentAcl = ( AclImpl ) cachedParent;
-
-                    // Pop into the acls map, so our convert method doesn't
-                    // need to deal with an unsynchronized AclCache, even though it might not be used directly.
-
-                    results.put( cachedParent.getId(), cachedParent );
-                }
-
                 assert parentAcl != null;
             }
 

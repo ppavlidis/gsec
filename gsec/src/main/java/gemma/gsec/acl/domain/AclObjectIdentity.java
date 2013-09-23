@@ -59,12 +59,25 @@ public class AclObjectIdentity implements ObjectIdentity {
     public AclObjectIdentity() {
     }
 
+    /**
+     * @param javaType
+     * @param identifier
+     */
     public AclObjectIdentity( Class<? extends Securable> javaType, Long identifier ) {
         this.type = javaType.getName();
         this.identifier = identifier;
     }
 
+    /**
+     * If the object is a proxy, its superclass must be the correct one to give the OBJECT_CLASS (type) in the ACL
+     * tables. For polymorphic classes this will be a problem if the method returns the superclass, so use fetch all
+     * properties. Example: PhenotypeAssociationDao. See chapter 19.1.3 of the Hibernate documentation for an
+     * explanation about polymorphic classes and proxies.
+     * 
+     * @param object
+     */
     public AclObjectIdentity( Object object ) {
+
         Class<?> typeClass = ClassUtils.getUserClass( object.getClass() );
 
         type = typeClass.getName();
