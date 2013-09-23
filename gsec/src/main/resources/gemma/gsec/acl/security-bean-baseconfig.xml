@@ -14,7 +14,7 @@
 				<property name="cacheManager" ref="cacheManager" />
 				<property name="cacheName" value="aclCache" />
 				<property name="overflowToDisk" value="false" />
-				<property name="maxElementsInMemory" value="20000" />
+				<property name="maxElementsInMemory" value="50000" />
 				<property name="timeToLive" value="3600" />
 				<property name="timeToIdle" value="3600" />
 			</bean>
