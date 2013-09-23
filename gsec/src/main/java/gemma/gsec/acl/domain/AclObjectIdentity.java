@@ -32,7 +32,6 @@ import org.springframework.security.acls.model.Sid;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
-
 /**
  * TODO Document Me
  * 
@@ -45,8 +44,10 @@ public class AclObjectIdentity implements ObjectIdentity {
 
     private Boolean entriesInheriting = false;
 
+    // of this objectidentity
     private Long id;
 
+    // of the entity
     private Serializable identifier;
 
     private AclSid ownerSid;
@@ -65,10 +66,10 @@ public class AclObjectIdentity implements ObjectIdentity {
 
     public AclObjectIdentity( Object object ) {
         Class<?> typeClass = ClassUtils.getUserClass( object.getClass() );
+
         type = typeClass.getName();
 
         Object result;
-
         try {
             Method method = typeClass.getMethod( "getId", new Class[] {} );
             result = method.invoke( object, new Object[] {} );
@@ -79,6 +80,7 @@ public class AclObjectIdentity implements ObjectIdentity {
         Assert.notNull( result, "getId() is required to return a non-null value" );
         Assert.isInstanceOf( Serializable.class, result, "Getter must provide a return value of type Serializable" );
         this.identifier = ( Serializable ) result;
+
     }
 
     public AclObjectIdentity( String type, Serializable identifier ) {

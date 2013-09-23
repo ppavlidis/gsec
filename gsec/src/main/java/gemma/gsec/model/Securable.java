@@ -29,6 +29,6 @@ public interface Securable {
     /**
      * @return
      */
-    public Long getId();
+    public abstract Long getId();
 
 }
