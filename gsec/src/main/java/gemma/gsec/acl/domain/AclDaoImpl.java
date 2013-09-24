@@ -516,10 +516,11 @@ public class AclDaoImpl implements AclDao {
 
         List<?> queryR = query.list();
 
-        if ( queryR.size() < objectIdentities.size() ) {
-            log.warn( "Expected " + objectIdentities.size() + " objectidentities from db, got " + queryR.size()
-                    + "from db" );
-        }
+        // this is okay if we haven't added the objects yet.
+        // if ( queryR.size() < objectIdentities.size() ) {
+        // log.warn( "Expected " + objectIdentities.size() + " objectidentities from db, got " + queryR.size()
+        // + " from db" );
+        // }
 
         Set<Long> parentIdsToLookup = new HashSet<>();
         for ( Object o : queryR ) {
