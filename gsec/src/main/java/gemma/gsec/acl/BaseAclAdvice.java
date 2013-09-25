@@ -370,10 +370,12 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     }
 
     /**
-     * Creates the acl_object_identity object.
+     * Creates the Acl object.
      * 
+     * @param acl If non-null we're in update mode, possibly setting the parent.
      * @param object The domain object.
-     * @return true if an ACL was created, false otherwise.
+     * @param parentAcl can be null
+     * @return the new or updated ACL
      */
     private final MutableAcl addOrUpdateAcl( MutableAcl acl, Securable object, Acl parentAcl ) {
 
@@ -387,11 +389,14 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
         boolean create = false;
         if ( acl == null ) {
+            // usually create, but could be update.
             try {
+                // this is probably redundant. We shouldn't have ACLs already.
                 acl = ( MutableAcl ) getAclService().readAclById( oi ); // throws exception if not found
                 /*
-                 * Could be findOrCreate, or could be a second pass that will let us fill in parent ACLs for associated
-                 * objects missed earlier in a persist cycle. E.g. BioMaterial
+                 * If we get here, we're in update mode after all. Could be findOrCreate, or could be a second pass that
+                 * will let us fill in parent ACLs for associated objects missed earlier in a persist cycle. E.g.
+                 * BioMaterial
                  */
                 try {
                     maybeSetParentACL( object, acl, parentAcl );
@@ -706,6 +711,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
             }
 
             if ( force || oktoClearACEs ) {
+                assert childAcl.getParentAcl() != null;
                 if ( log.isTraceEnabled() ) log.trace( "Erasing ACEs from child " + object );
 
                 while ( childAcl.getEntries().size() > 0 ) {
@@ -757,6 +763,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
             boolean changedParentAcl = false;
             if ( currentParentAcl == null ) {
+                log.trace( "Setting parent ACL to child=" + childAcl + " parent=" + parentAcl );
                 childAcl.setParent( parentAcl );
                 childAcl.setEntriesInheriting( true );
                 changedParentAcl = true;
