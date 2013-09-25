@@ -237,9 +237,10 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * @return
      */
     protected Acl locateParentAcl( SecuredChild s ) {
-        if ( s.getSecurityOwner() != null ) {
-            return this.getAclService().readAclById( makeObjectIdentity( s.getSecurityOwner() ) );
-        }
+        Securable parent = locateSecuredParent( s );
+
+        if ( parent != null ) return this.getAclService().readAclById( makeObjectIdentity( parent ) );
+
         return null;
     }
 
@@ -462,7 +463,8 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
             }
 
         } else {
-            assert !acl.getEntries().isEmpty() || ( parentAcl != null && !parentAcl.getEntries().isEmpty() );
+            assert !acl.getEntries().isEmpty() || ( parentAcl != null && !parentAcl.getEntries().isEmpty() ) : "Failed to get valid ace for acl or parents: "
+                    + acl + " parent=" + parentAcl;
         }
 
         /*
@@ -632,6 +634,26 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
         }
 
         return false;
+    }
+
+    /**
+     * Recursively locate the actual secured parent.
+     * 
+     * @param s
+     * @return
+     */
+    private Securable locateSecuredParent( SecuredChild s ) {
+        if ( s.getSecurityOwner() == null ) {
+            return null;
+
+        }
+        Securable securityOwner = s.getSecurityOwner();
+
+        if ( securityOwner instanceof SecuredChild ) {
+            return locateSecuredParent( ( SecuredChild ) securityOwner );
+        }
+        return securityOwner;
+
     }
 
     /**
