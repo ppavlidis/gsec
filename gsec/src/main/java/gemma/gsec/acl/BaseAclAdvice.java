@@ -497,6 +497,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
                      * temporarily elevated status.
                      */
                     sid = new AclPrincipalSid( userName );
+                    acl.setOwner( sid );
                 }
 
                 /*
@@ -516,7 +517,12 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
          * these after creation.)
          */
         if ( sid.equals( acl.getOwner() ) || isAdmin ) {
-            acl.setOwner( sid ); // this might be the 'user' now.
+
+            if ( isAdmin && acl.getOwner() == null ) {
+                // don't change the owner.
+                acl.setOwner( sid );
+            }
+
             if ( parentAcl != null && inheritFromParent ) {
                 if ( log.isTraceEnabled() )
                     log.trace( "Setting parent to: " + parentAcl.getObjectIdentity() + " <--- "
