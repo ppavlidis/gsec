@@ -129,15 +129,13 @@
 		<property name="hierarchy">
 			<value>[CDATA[
 				GROUP_ADMIN > GROUP_USER
-				GROUP_RUN_AS_ADMIN >
-				GROUP_ADMIN
+				GROUP_RUN_AS_ADMIN > GROUP_ADMIN
 				GROUP_USER > GROUP_ANONYMOUS
 				GROUP_RUN_AS_USER >
 				GROUP_USER
 				GROUP_ADMIN > GROUP_AGENT
 				GROUP_AGENT > GROUP_ANONYMOUS
-				GROUP_ANONYMOUS >
-				IS_AUTHENTICATED_ANONYMOUSLY
+				GROUP_ANONYMOUS > IS_AUTHENTICATED_ANONYMOUSLY
 				]]
 			</value>
 		</property>
@@ -159,6 +157,7 @@
 				</bean>
 			</list>
 		</constructor-arg>
+		<property name="sidRetrievalStrategy" ref="sidRetrievalStrategy" />
 	</bean>
 
 	<!-- After reading an object filter. Throws an exception when access is denied (AFTER_ACL_READ) -->
