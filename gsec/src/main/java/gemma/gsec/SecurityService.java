@@ -88,10 +88,7 @@ public interface SecurityService {
     /**
      * @param securables
      * @return the subset that are public, if any
-     * @throws AuthorizationServiceException if the collection is empty, see comments in
-     *         {@link gemma.gsec.acl.voter.AclCollectionEntryVoter AclCollectionEntryVoter}
      */
-    @Secured({ "ACL_SECURABLE_COLLECTION_READ" })
     public abstract <T extends Securable> Collection<T> choosePublic( Collection<T> securables );
 
     /**
