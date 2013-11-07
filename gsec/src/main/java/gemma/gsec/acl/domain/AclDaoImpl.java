@@ -553,8 +553,12 @@ public class AclDaoImpl implements AclDao {
 
                         results.put( cachedParent.getId(), cachedParent );
                     }
-                    assert parentAcl != null;
+
+                } else {
+                    parentAcl = ( AclImpl ) results.get( parentObjectIdentity.getId() );
                 }
+
+                assert parentAcl != null;
             }
 
             Acl acl = new AclImpl( oi, aclAuthorizationStrategy, parentAcl );

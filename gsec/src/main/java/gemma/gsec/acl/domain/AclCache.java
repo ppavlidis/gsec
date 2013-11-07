@@ -125,7 +125,7 @@ public class AclCache implements org.springframework.security.acls.model.AclCach
 
         }
 
-        if ( ( acl.getParentAcl() != null ) && ( acl.getParentAcl() instanceof MutableAcl ) ) {
+        if ( acl.getParentAcl() != null && acl.getParentAcl() instanceof MutableAcl ) {
             putInCache( ( MutableAcl ) acl.getParentAcl() );
         }
 
