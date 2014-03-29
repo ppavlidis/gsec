@@ -53,7 +53,7 @@ import org.springframework.util.StringUtils;
  * work exactly like the superclass.
  * <p>
  * Method invocation works like this: As for the AclEntryVoter, this only handles cases where there is a single matching
- * argument. Each argument is checked in order; if it's a collection, its contents are exampined; If the collection
+ * argument. Each argument is checked in order; if it's a collection, its contents are examined; If the collection
  * contains objects matching the configured processDomainObjectClass, then it is used. If the collection is empty, it is
  * ignored. If no Collection of processDomainObjectClass is found, a AuthorizationServiceException is thrown. The
  * limitation that the collection be non-empty is so there is some way to tell what the intent is.
