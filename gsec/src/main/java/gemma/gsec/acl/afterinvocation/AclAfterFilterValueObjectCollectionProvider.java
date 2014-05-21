@@ -45,9 +45,11 @@ import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
 /**
- * Security check for reading collections of value objects.
+ * Security check for reading collections of SecureValueObjects, or maps that have SecureValueObjects as keys - map
+ * values are NOT checked.
  * <p>
- * As a side effect, it fills in security status information in the value objects, but only if permission was granted.
+ * As a side effect, it fills in security status information in the value objects, on those object for which permission
+ * was granted.
  * 
  * @author cmcdonald
  * @version $Id: AclAfterFilterValueObjectCollectionProvider.java,v 1.9 2013/09/14 16:56:01 paul Exp $
@@ -87,7 +89,9 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
 
                 Filterer<Object> filterer = null;
 
-                if ( returnedObject instanceof Collection ) {
+                if ( returnedObject instanceof Map ) {
+                    filterer = new MapFilterer<Object>( ( Map<Object, Object> ) returnedObject );
+                } else if ( returnedObject instanceof Collection ) {
                     Collection<Object> collection = ( Collection<Object> ) returnedObject;
                     filterer = new CollectionFilterer<Object>( collection );
                 } else if ( returnedObject.getClass().isArray() ) {
