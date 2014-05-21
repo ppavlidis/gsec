@@ -88,8 +88,9 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                 }
 
                 Filterer<Object> filterer = null;
-
+                boolean isMap = false;
                 if ( returnedObject instanceof Map ) {
+                    isMap = true;
                     filterer = new MapFilterer<Object>( ( Map<Object, Object> ) returnedObject );
                 } else if ( returnedObject instanceof Collection ) {
                     Collection<Object> collection = ( Collection<Object> ) returnedObject;
@@ -107,7 +108,7 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                 /*
                  * Collect up the securevalueobjects
                  */
-                Collection<SecureValueObject> securablesToFilter = new HashSet<SecureValueObject>();
+                Collection<SecureValueObject> securablesToFilter = new HashSet<>();
                 while ( collectionIter.hasNext() ) {
                     Object domainObject = collectionIter.next();
                     if ( !SecureValueObject.class.isAssignableFrom( domainObject.getClass() ) ) {
@@ -125,10 +126,6 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                     }
                 }
 
-                if ( ( ( Collection<SecureValueObject> ) filterer.getFilteredObject() ).isEmpty() ) {
-                    return filterer.getFilteredObject();
-                }
-
                 // Following are only relevant if you are logged in.
                 if ( !SecurityUtil.isUserLoggedIn() ) {
                     return filterer.getFilteredObject();
@@ -137,23 +134,38 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
                 StopWatch timer = new StopWatch();
                 timer.start();
 
-                Map<SecureValueObject, Acl> acls = securityService.getAcls( ( Collection<SecureValueObject> ) filterer
-                        .getFilteredObject() );
+                Collection<SecureValueObject> securables;
+                if ( isMap ) {
+                    Map<SecureValueObject, ?> filteredObject = ( Map<SecureValueObject, ?> ) filterer
+                            .getFilteredObject();
+                    if ( filteredObject.isEmpty() ) {
+                        return filteredObject;
+                    }
+                    securables = filteredObject.keySet();
+                } else {
+                    Collection<SecureValueObject> filteredObject = ( Collection<SecureValueObject> ) filterer
+                            .getFilteredObject();
+                    if ( filteredObject.isEmpty() ) {
+                        return filteredObject;
+                    }
+                    securables = filteredObject;
+                }
 
+                Map<SecureValueObject, Acl> acls = securityService.getAcls( securables );
                 Map<SecureValueObject, Boolean> areOwnedByCurrentUser = securityService
-                        .areOwnedByCurrentUser( ( Collection<SecureValueObject> ) filterer.getFilteredObject() );
+                        .areOwnedByCurrentUser( securables );
                 boolean userIsAdmin = SecurityUtil.isUserAdmin();
 
                 // Only need to check for write permissions if we can't already infer it.
-                Map<SecureValueObject, Boolean> canWrite = new HashMap<SecureValueObject, Boolean>();
+                Map<SecureValueObject, Boolean> canWrite = new HashMap<>();
                 if ( !userIsAdmin && !requirePermission.contains( BasePermission.WRITE ) ) {
-                    List<Permission> writePermissions = new ArrayList<Permission>();
+                    List<Permission> writePermissions = new ArrayList<>();
                     writePermissions.add( BasePermission.WRITE );
                     canWrite = securityService.hasPermissionVO( securablesToFilter, this.requirePermission,
                             authentication );
                 }
 
-                for ( SecureValueObject svo : acls.keySet() ) {
+                for ( SecureValueObject svo : securables ) {
 
                     /*
                      * Populate optional fields in the ValueObject.
@@ -161,6 +173,7 @@ public class AclAfterFilterValueObjectCollectionProvider extends AbstractAclProv
 
                     // this should be fast, but could be even faster.
                     Acl acl = acls.get( svo );
+                    assert acl != null;
                     svo.setIsPublic( !SecurityUtil.isPrivate( acl ) );
                     svo.setIsShared( SecurityUtil.isShared( acl ) );
                     svo.setUserOwned( areOwnedByCurrentUser.get( svo ) );
