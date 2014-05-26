@@ -28,6 +28,7 @@ import org.springframework.security.authentication.AuthenticationTrustResolverIm
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Database-independent methods for ACLs
@@ -177,5 +178,15 @@ public class SecurityUtil {
         if ( authentication == null ) throw new RuntimeException( "Null authentication object" );
 
         return authentication;
+    }
+    
+    /**
+     * Returns the username of the authenticated user
+     * 
+     * @return
+     */
+    public static String getCurrentUsername() {
+        UserDetails user = ( UserDetails ) ( getAuthentication().getPrincipal() );
+        return user.getUsername();
     }
 }
