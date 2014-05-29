@@ -19,48 +19,18 @@
 
 package gemma.gsec.model;
 
+import java.io.Serializable;
+
 /**
  * Representing a person or organization that can be contacted about, or is the source of, data in the system. A contact
  * has role and can be the member of a security group.
  */
-public abstract class Contact extends Describable {
-
-    /**
-     * Constructs new instances of {@link Contact}.
-     */
-    public static final class Factory {
-        /**
-         * Constructs a new instance of {@link Contact}.
-         */
-        public static Contact newInstance() {
-            return new ContactImpl();
-        }
-
-    }
-
-    /**
-     * The serial version UID of this class. Needed for serialization.
-     */
-    private static final long serialVersionUID = 2410750024818017046L;
-    private String email;
-
-    /**
-     * No-arg constructor added to satisfy javabean contract
-     * 
-     * @author Paul
-     */
-    public Contact() {
-    }
+public interface Contact extends Serializable {
 
     /**
      * 
      */
-    public String getEmail() {
-        return this.email;
-    }
+    public String getEmail();
 
-    public void setEmail( String email ) {
-        this.email = email;
-    }
-
+    public void setEmail( String email );
 }

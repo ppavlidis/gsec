@@ -1,7 +1,7 @@
 /*
- * The Gemma project.
+ * The gemma-gsec project
  * 
- * Copyright (c) 2006-2012 University of British Columbia
+ * Copyright (c) 2014 University of British Columbia
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,59 +22,24 @@ package gemma.gsec.model;
 import java.util.Collection;
 
 /**
- * An organized group of researchers with an identifiable leader and group members.
+ * TODO Document Me
+ * 
+ * @author ptan
+ * @version $Id$
  */
-public abstract class UserGroup extends Describable implements SecuredNotChild {
-
-    /**
-     * Constructs new instances of {@link UserGroup}.
-     */
-    public static final class Factory {
-        /**
-         * Constructs a new instance of {@link UserGroup}.
-         */
-        public static UserGroup newInstance() {
-            return new UserGroupImpl();
-        }
-
-    }
-
-    /**
-     * The serial version UID of this class. Needed for serialization.
-     */
-    private static final long serialVersionUID = 5795744069086222179L;
-    private Collection<User> groupMembers = new java.util.HashSet<>();
-
-    private Collection<GroupAuthority> authorities = new java.util.HashSet<GroupAuthority>();
-
-    /**
-     * No-arg constructor added to satisfy javabean contract
-     * 
-     * @author Paul
-     */
-    public UserGroup() {
-    }
+public interface UserGroup extends Describable, SecuredNotChild {
 
     /**
      * 
      */
-    public Collection<GroupAuthority> getAuthorities() {
-        return this.authorities;
-    }
+    public Collection<GroupAuthority> getAuthorities();
 
     /**
      * 
      */
-    public Collection<User> getGroupMembers() {
-        return this.groupMembers;
-    }
+    public Collection<User> getGroupMembers();
 
-    public void setAuthorities( Collection<GroupAuthority> authorities ) {
-        this.authorities = authorities;
-    }
+    public void setAuthorities( Collection<GroupAuthority> authorities );
 
-    public void setGroupMembers( Collection<User> groupMembers ) {
-        this.groupMembers = groupMembers;
-    }
-
+    public void setGroupMembers( Collection<User> groupMembers );
 }

@@ -1,7 +1,7 @@
 /*
- * The Gemma project.
+ * The gemma-gsec project
  * 
- * Copyright (c) 2006-2012 University of British Columbia
+ * Copyright (c) 2014 University of British Columbia
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,103 +16,28 @@
  * limitations under the License.
  *
  */
+
 package gemma.gsec.model;
 
+import java.io.Serializable;
+
 /**
- * Authority for groups (kind of like a "user role", but for group-based authorization)
+ * TODO Document Me
+ * 
+ * @author ptan
+ * @version $Id$
  */
-public abstract class GroupAuthority implements java.io.Serializable {
+public interface GroupAuthority extends Serializable {
 
-    /**
-     * Constructs new instances of {@link GroupAuthority}.
-     */
-    public static final class Factory {
-        /**
-         * Constructs a new instance of {@link GroupAuthority}.
-         */
-        public static GroupAuthority newInstance() {
-            return new GroupAuthorityImpl();
-        }
-
-        /**
-         * Constructs a new instance of {@link GroupAuthority}, taking all possible properties (except the
-         * identifier(s))as arguments.
-         */
-        public static GroupAuthority newInstance( String authority ) {
-            final GroupAuthority entity = new GroupAuthorityImpl();
-            entity.setAuthority( authority );
-            return entity;
-        }
-    }
-
-    /**
-     * The serial version UID of this class. Needed for serialization.
-     */
-    private static final long serialVersionUID = 6376142653264312139L;
-    private String authority;
-
-    private Long id;
-
-    /**
-     * No-arg constructor added to satisfy javabean contract
-     * 
-     * @author Paul
-     */
-    public GroupAuthority() {
-    }
-
-    /**
-     * Returns <code>true</code> if the argument is an GroupAuthority instance and all identifiers for this entity equal
-     * the identifiers of the argument entity. Returns <code>false</code> otherwise.
-     */
-    @Override
-    public boolean equals( Object object ) {
-        if ( this == object ) {
-            return true;
-        }
-        if ( !( object instanceof GroupAuthority ) ) {
-            return false;
-        }
-        final GroupAuthority that = ( GroupAuthority ) object;
-        if ( this.id == null || that.getId() == null || !this.id.equals( that.getId() ) ) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * <p>
-     * Authority granted to the group
-     * </p>
-     */
-    public String getAuthority() {
-        return this.authority;
-    }
+    public String getAuthority();
 
     /**
      * 
      */
-    public Long getId() {
-        return this.id;
-    }
+    public Long getId();
 
-    /**
-     * Returns a hash code based on this entity's identifiers.
-     */
-    @Override
-    public int hashCode() {
-        int hashCode = 0;
-        hashCode = 29 * hashCode + ( id == null ? 0 : id.hashCode() );
+    public void setAuthority( String authority );
 
-        return hashCode;
-    }
-
-    public void setAuthority( String authority ) {
-        this.authority = authority;
-    }
-
-    public void setId( Long id ) {
-        this.id = id;
-    }
+    public void setId( Long id );
 
 }

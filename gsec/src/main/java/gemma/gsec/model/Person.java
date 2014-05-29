@@ -21,22 +21,7 @@ package gemma.gsec.model;
 /**
  * 
  */
-public abstract class Person extends ContactImpl implements gemma.gsec.model.Securable {
-
-    /**
-     * Constructs new instances of {@link Person}.
-     */
-    public static final class Factory {
-        /**
-         * Constructs a new instance of {@link Person}.
-         */
-        public static Person newInstance() {
-            return new PersonImpl();
-        }
-
-    }
-
-    private String lastName;
+public interface Person extends Contact, Securable {
 
     /**
      * 
@@ -46,12 +31,7 @@ public abstract class Person extends ContactImpl implements gemma.gsec.model.Sec
     /**
      * 
      */
-    public String getLastName() {
-        return this.lastName;
-    }
+    public String getLastName();
 
-    public void setLastName( String lastName ) {
-        this.lastName = lastName;
-    }
-
+    public void setLastName( String lastName );
 }
