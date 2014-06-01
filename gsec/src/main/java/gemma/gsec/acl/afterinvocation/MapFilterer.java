@@ -88,7 +88,6 @@ public class MapFilterer<T> implements Filterer<T> {
     @Override
     public Iterator<T> iterator() {
         collectionIter = map.keySet().iterator();
-
         return collectionIter;
     }
 
@@ -97,6 +96,6 @@ public class MapFilterer<T> implements Filterer<T> {
      */
     @Override
     public void remove( T object ) {
-        collectionIter.remove();
+        removeList.add( object );
     }
 }
