@@ -488,7 +488,7 @@ public class AclDaoImpl implements AclDao {
             query.setParameter( "type", types.iterator().next() );
             query.setParameterList( "ids", ids );
         } else {
-            log.info( "Querying for more than on OI type" );
+            log.debug( "Querying for more than one OI type" );
             int numClauses = 0;
             for ( int i = 1; i <= objectIdentities.size(); i++ ) {
                 buf.append( " (o.identifier=? and o.type=?)" );
