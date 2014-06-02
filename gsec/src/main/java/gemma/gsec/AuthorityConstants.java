@@ -38,6 +38,11 @@ public class AuthorityConstants {
     public static final String REQUIRED_ADMINISTRATOR_USER_NAME = "administrator";
 
     /**
+     * The ID of the initial administrator. This name is hard-coded for system initialization in init-entities.sql.
+     */
+    public static final Long REQUIRED_ADMINISTRATOR_ID = 1L;
+
+    /**
      * The name of the administrator group authority. All administrators must be in this group.
      */
     public static final String ADMIN_GROUP_AUTHORITY = "GROUP_ADMIN";
