@@ -113,7 +113,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
      * 
      * @return
      */
-    public Collection<User> loadAll();
+    public <T extends User> Collection<T> loadAll();
 
     public boolean loggedIn();
 

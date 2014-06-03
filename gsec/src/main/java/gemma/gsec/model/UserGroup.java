@@ -32,14 +32,15 @@ public interface UserGroup extends Describable, SecuredNotChild {
     /**
      * 
      */
-    public Collection<GroupAuthority> getAuthorities();
+    public <T extends GroupAuthority> Collection<T> getAuthorities();
 
     /**
      * 
      */
-    public Collection<User> getGroupMembers();
+    public <T extends User> Collection<T> getGroupMembers();
 
-    public void setAuthorities( Collection<GroupAuthority> authorities );
+    public <T extends GroupAuthority> void setAuthorities( Collection<T> authorities );
 
-    public void setGroupMembers( Collection<User> groupMembers );
+    public <T extends User> void setGroupMembers( Collection<T> groupMembers );
+
 }
