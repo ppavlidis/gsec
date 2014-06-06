@@ -11,7 +11,7 @@
 	<bean id="aclCache" class="gemma.gsec.acl.domain.AclCache">
 		<constructor-arg>
 			<bean class="org.springframework.cache.ehcache.EhCacheFactoryBean">
-				<property name="cacheManager" ref="cacheManager" />
+                <property name="cacheManager" ref="ehcache" />
 				<property name="cacheName" value="aclCache" />
 				<property name="overflowToDisk" value="false" />
 				<property name="maxElementsInMemory" value="50000" />
