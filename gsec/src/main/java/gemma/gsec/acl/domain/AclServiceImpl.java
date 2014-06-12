@@ -283,6 +283,10 @@ public class AclServiceImpl implements AclService {
             // / AclObjectIdentity aoi = new AclObjectIdentity( key.getType(), key.getIdentifier() );
 
             if ( !result.containsKey( key ) ) {
+                log.debug( "ACL result size " + result.keySet().size() );
+                if ( result.keySet().size() > 0 ) {
+                    log.debug( "ACL result first key " + result.keySet().iterator().next() );
+                }
                 throw new NotFoundException( "Unable to find ACL information for object identity '" + key + "'" );
             }
 
