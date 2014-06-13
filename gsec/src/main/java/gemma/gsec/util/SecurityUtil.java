@@ -179,14 +179,17 @@ public class SecurityUtil {
 
         return authentication;
     }
-    
+
     /**
      * Returns the username of the authenticated user
      * 
      * @return
      */
     public static String getCurrentUsername() {
-        UserDetails user = ( UserDetails ) ( getAuthentication().getPrincipal() );
-        return user.getUsername();
+        Object principal = getAuthentication().getPrincipal();
+        if ( principal instanceof String )
+            return ( String ) principal;
+        else if ( principal instanceof UserDetails ) return ( ( UserDetails ) principal ).getUsername();
+        throw new UnsupportedOperationException( "Principal is of unrecognized type" );
     }
 }
