@@ -669,16 +669,21 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * When setting the parent, we check to see if we can delete the ACEs on the 'child', if any. This is because we
-     * want permissions to be managed by the parent. Check that the ACEs on the child are exactly equivalent to the ones
-     * on the parent.
+     * want permissions to be managed by the parent, so ACEs on the child are redundant and possibly a source of later
+     * trouble. Special cases are handled by specialCaseToAllowRemovingAcesFromChild.
+     * <p>
+     * Before deleting anything, we check that the ACEs on the child are exactly equivalent to the ones on the parent.
+     * If they aren't, it implies the child was not correctly synchronized with the parent in the first place.
      * 
-     * @param parentAcl -- careful with the order!
      * @param object
+     * @param parentAcl -- careful with the order!
      * @param acl
-     * @param true if ACEs were cleared.
+     * @param true if ACEs were cleared (or if they were not there).
+     * @throws IllegalStateException if the parent has no ACEs.
      */
     private final boolean maybeClearACEsOnChild( Securable object, MutableAcl childAcl, Acl parentAcl ) {
         if ( parentAcl == null ) return false;
+        if ( object instanceof SecuredNotChild ) return false;
 
         int aceCount = childAcl.getEntries().size();
 
@@ -717,7 +722,8 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
             }
 
             if ( force || oktoClearACEs ) {
-                assert childAcl.getParentAcl() != null;
+                assert childAcl.getParentAcl() != null : "Child lacks parent " + childAcl + " force=" + force;
+
                 if ( log.isTraceEnabled() ) log.trace( "Erasing ACEs from child " + object );
 
                 while ( childAcl.getEntries().size() > 0 ) {
@@ -754,7 +760,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * @param object
      * @param acl - the potential child
      * @param parentAcl - the potential parent
-     * @return the parentAcl (can be null)
+     * @return parentAcl can be null, esp. if the object is SecuredNotChild (always)
      */
     private final Acl maybeSetParentACL( final Securable object, MutableAcl childAcl, final Acl parentAcl ) {
         if ( parentAcl != null && !SecuredNotChild.class.isAssignableFrom( object.getClass() ) ) {
