@@ -24,6 +24,7 @@ import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
 import gemma.gsec.acl.domain.AclGrantedAuthoritySid;
 import gemma.gsec.acl.domain.AclPrincipalSid;
 import gemma.gsec.acl.domain.AclService;
+import gemma.gsec.authentication.UserManager;
 import gemma.gsec.model.Securable;
 import gemma.gsec.model.SecureValueObject;
 import gemma.gsec.util.SecurityUtil;
@@ -65,7 +66,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import gemma.gsec.model.UserGroup;
-import gemma.gsec.model.UserManager;
 
 /**
  * Methods for changing security on objects, creating and modifying groups, checking security on objects.

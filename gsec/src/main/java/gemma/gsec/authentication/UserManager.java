@@ -16,7 +16,10 @@
  * limitations under the License.
  *
  */
-package gemma.gsec.model;
+package gemma.gsec.authentication;
+
+import gemma.gsec.model.User;
+import gemma.gsec.model.UserGroup;
 
 import java.util.Collection;
 
