@@ -45,7 +45,7 @@ import org.springframework.stereotype.Component;
  * @author keshav
  * @version $Id: ManualAuthenticationServiceImpl.java,v 1.5 2013/09/22 18:50:42 paul Exp $
  */
-@Component
+@Component("manualAuthenticationService")
 public class ManualAuthenticationServiceImpl implements ApplicationContextAware, InitializingBean,
         ManualAuthenticationService {
     private static Log log = LogFactory.getLog( ManualAuthenticationServiceImpl.class.getName() );

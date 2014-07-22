@@ -18,8 +18,6 @@
  */
 package gemma.gsec;
 
-import gemma.gsec.AuthorityConstants;
-import gemma.gsec.SecurityService;
 import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
 import gemma.gsec.acl.domain.AclGrantedAuthoritySid;
 import gemma.gsec.acl.domain.AclPrincipalSid;
@@ -27,6 +25,7 @@ import gemma.gsec.acl.domain.AclService;
 import gemma.gsec.authentication.UserManager;
 import gemma.gsec.model.Securable;
 import gemma.gsec.model.SecureValueObject;
+import gemma.gsec.model.UserGroup;
 import gemma.gsec.util.SecurityUtil;
 
 import java.util.ArrayList;
@@ -65,8 +64,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import gemma.gsec.model.UserGroup;
-
 /**
  * Methods for changing security on objects, creating and modifying groups, checking security on objects.
  * <p>
@@ -78,7 +75,7 @@ import gemma.gsec.model.UserGroup;
  * @author paul
  * @version $Id: SecurityServiceImpl.java,v 1.28 2013/12/12 00:10:12 paul Exp $
  */
-@Service
+@Service("securityService")
 @Transactional
 public class SecurityServiceImpl implements SecurityService {
 
