@@ -64,8 +64,7 @@ public class AclEntryAfterInvocationCollectionFilteringProvider<A extends Secura
             Object returnedObject ) throws AccessDeniedException {
 
         if ( returnedObject == null ) {
-            log.debug( "Return object is null, skipping" );
-
+            // log.debug( "Return object is null, skipping (target=" + object + ")" );
             return null;
         }
 
@@ -105,7 +104,7 @@ public class AclEntryAfterInvocationCollectionFilteringProvider<A extends Secura
 
             filter( filterer, hasPerms );
 
-            if ( !hasPerms.isEmpty() && timer.getTime() > 20 * hasPerms.size() ) {
+            if ( log.isInfoEnabled() && !hasPerms.isEmpty() && timer.getTime() > 20 * hasPerms.size() ) {
                 log.info( "Filter " + hasPerms.size() + " objects: " + timer.getTime() + "ms" );
             }
 
@@ -129,8 +128,8 @@ public class AclEntryAfterInvocationCollectionFilteringProvider<A extends Secura
             if ( !hasPermission ) {
                 filterer.remove( domainObject );
 
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Principal is NOT authorised for element: " + domainObject );
+                if ( log.isTraceEnabled() ) {
+                    log.trace( "Principal is NOT authorised for element: " + domainObject );
                 }
             }
             i++;

@@ -70,11 +70,13 @@ public class MapFilterer<T> implements Filterer<T> {
 
         int originalSize = map.size();
 
+        if ( map.isEmpty() ) return map;
+
         while ( removeIter.hasNext() ) {
             map.remove( removeIter.next() );
         }
 
-        if ( logger.isDebugEnabled() ) {
+        if ( logger.isDebugEnabled() && originalSize != map.size() ) {
             logger.debug( "Original map contained " + originalSize + " elements; now contains " + map.size()
                     + " elements" );
         }

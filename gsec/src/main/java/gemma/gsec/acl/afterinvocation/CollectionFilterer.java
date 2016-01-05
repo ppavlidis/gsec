@@ -65,7 +65,7 @@ class CollectionFilterer<T> implements Filterer<T> {
             collection.remove( removeIter.next() );
         }
 
-        if ( logger.isDebugEnabled() ) {
+        if ( logger.isDebugEnabled() && originalSize != collection.size() ) {
             logger.debug( "Original collection contained " + originalSize + " elements; now contains "
                     + collection.size() + " elements" );
         }
