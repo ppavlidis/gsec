@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>pavlab</groupId>
     <artifactId>gemma-gsec</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
     <name>gsec</name>
     <organization>
@@ -13,6 +13,7 @@
 		<url>https://github.com/ppavlidis/gsec</url>
 		<connection>scm:git:git://github.com/ppavlidis/gsec.git</connection>
 		<developerConnection>scm:git:git@github.com:ppavlidis/gsec.git</developerConnection>
+    <tag>gemma-gsec-0.0.1</tag>
   </scm>
     <licenses>
         <license>
