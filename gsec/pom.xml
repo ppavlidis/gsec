@@ -7,9 +7,14 @@
     <packaging>jar</packaging>
     <name>gsec</name>
     <organization>
-        <name>UBC Centre for High-throughput Biology</name>
+        <name>UBC Michael Smith Laboratories</name>
         <url>http://www.chibi.ubc.ca/</url>
     </organization>
+    <scm>
+		<url>https://github.com/ppavlidis/gsec</url>
+		<connection>scm:git:git://github.com/ppavlidis/gsec.git</connection>
+		<developerConnection>scm:git:git@github.com:ppavlidis/gsec.git</developerConnection>
+	</scm>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -29,7 +34,7 @@
         <dependency>
             <groupId>baseCode</groupId>
             <artifactId>baseCode</artifactId>
-            <version>1.0.16-SNAPSHOT</version>
+            <version>1.0.16</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
@@ -307,8 +312,8 @@
     </build>
     <distributionManagement>
         <site>
-            <id>broca</id>
-            <name>broca</name>
+            <id>otto</id>
+            <name>otto</name>
             <url>scpexe://otto.pavlab.chibi.ubc.ca:/space/gemmaData/baseCode-site</url>
         </site>
         <repository>
