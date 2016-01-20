@@ -1,9 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>pavlab</groupId>
     <artifactId>gemma-gsec</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
     <name>gsec</name>
     <organization>
@@ -14,7 +13,8 @@
 		<url>https://github.com/ppavlidis/gsec</url>
 		<connection>scm:git:git://github.com/ppavlidis/gsec.git</connection>
 		<developerConnection>scm:git:git@github.com:ppavlidis/gsec.git</developerConnection>
-	</scm>
+	  <tag>gemma-gsec-0.0.1</tag>
+  </scm>
     <licenses>
         <license>
             <name>The Apache Software License, Version 2.0</name>
@@ -255,8 +255,7 @@
                             </classpath>
                         </taskdef>
                         <mkdir dir="target/schema" />
-                        <schemaexport quiet="true" text="true" create="true" drop="false" delimiter=";"
-                            output="${project.build.directory}/schema/gsec-acl-ddl.sql" properties="${basedir}/src/main/resources/hibernate.properties">
+                        <schemaexport quiet="true" text="true" create="true" drop="false" delimiter=";" output="${project.build.directory}/schema/gsec-acl-ddl.sql" properties="${basedir}/src/main/resources/hibernate.properties">
                             <fileset dir="src/main/resources" includes="**/*.hbm.xml" />
                         </schemaexport>
                     </target>
@@ -300,7 +299,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore />
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
