@@ -54,6 +54,7 @@ public class ArrayFilterer<T> implements Filterer<T> {
         // Recreate an array of same type and filter the removed objects.
         int originalSize = list.length;
         int sizeOfResultingList = originalSize - removeList.size();
+        @SuppressWarnings("unchecked")
         T[] filtered = ( T[] ) Array.newInstance( list.getClass().getComponentType(), sizeOfResultingList );
 
         for ( int i = 0, j = 0; i < list.length; i++ ) {

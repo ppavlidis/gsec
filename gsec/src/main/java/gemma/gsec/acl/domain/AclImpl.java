@@ -39,6 +39,10 @@ import org.springframework.util.Assert;
  */
 public class AclImpl implements OwnershipAcl {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -953242274878593548L;
     private transient AclAuthorizationStrategy aclAuthorizationStrategy;
     private List<AclEntry> entries;
     private AclObjectIdentity objectIdentity;

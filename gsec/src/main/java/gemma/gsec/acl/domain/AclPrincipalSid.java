@@ -24,6 +24,10 @@ import org.springframework.util.Assert;
  */
 public class AclPrincipalSid extends AclSid {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4679911678447417301L;
     private String principal;
 
     public AclPrincipalSid() {

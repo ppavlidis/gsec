@@ -22,6 +22,10 @@ import org.springframework.security.acls.model.Sid;
  */
 public abstract class AclSid implements Sid {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3256613712125656321L;
     // This ID is just our convention for hibernate. In reality the effective unique primary key is the sid (e.g.
     // username or
     // grantedauthority)

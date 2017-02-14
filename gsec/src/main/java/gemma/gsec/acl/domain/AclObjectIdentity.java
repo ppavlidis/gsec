@@ -39,6 +39,11 @@ import org.springframework.util.ClassUtils;
  * @version $Id: AclObjectIdentity.java,v 1.1 2013/09/14 16:55:18 paul Exp $
  */
 public class AclObjectIdentity implements ObjectIdentity {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6715898560226971244L;
+
     // this should be ord
     private Collection<AclEntry> entries = new HashSet<>();
 

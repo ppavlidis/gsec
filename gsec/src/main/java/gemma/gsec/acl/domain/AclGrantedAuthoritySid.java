@@ -22,6 +22,10 @@ import org.springframework.util.Assert;
  * @version $Id: AclGrantedAuthoritySid.java,v 1.1 2013/09/14 16:55:18 paul Exp $
  */
 public class AclGrantedAuthoritySid extends AclSid {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7755206462003052441L;
     private String grantedAuthority;
 
     public AclGrantedAuthoritySid() {
