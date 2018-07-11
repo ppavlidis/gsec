@@ -700,7 +700,8 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
             boolean oktoClearACEs = true;
 
-            // check for exact match of all ACEs
+            // check for exact match of all ACEs - FIXME PROBLEM the "Owner" (SID) can be different, but that's okay for ADMINS
+            // This is a long-standing issue: https://bugzilla.pavlab.msl.ubc.ca/show_bug.cgi?id=2996
             for ( AccessControlEntry ace : parentAcl.getEntries() ) {
                 boolean found = false;
                 for ( AccessControlEntry childAce : childAcl.getEntries() ) {

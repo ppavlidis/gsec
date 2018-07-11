@@ -42,6 +42,7 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * We have our own implementation of the AclDao in part because of deadlock problems caused by the default JDBC-based
@@ -54,7 +55,6 @@ import org.springframework.util.Assert;
  * is a recipe for deadlock when using the default MySQL transaction isolation level of REPEATABLE_READ. </blockquote>
  * 
  * @author Paul
- * @version $Id: AclDaoImpl.java,v 1.1 2013/09/14 16:55:20 paul Exp $
  */
 @Component(value = "aclDao")
 public class AclDaoImpl implements AclDao {
@@ -265,9 +265,9 @@ public class AclDaoImpl implements AclDao {
         Assert.isTrue( batchSize >= 1, "BatchSize must be >= 1" );
         Assert.notEmpty( objects, "Objects to lookup required" );
 
-        Map<ObjectIdentity, Acl> result = new HashMap<ObjectIdentity, Acl>();
+        Map<ObjectIdentity, Acl> result = new HashMap<>();
 
-        Set<ObjectIdentity> currentBatchToLoad = new HashSet<ObjectIdentity>();
+        Set<ObjectIdentity> currentBatchToLoad = new HashSet<>();
 
         for ( int i = 0; i < objects.size(); i++ ) {
             final ObjectIdentity oid = objects.get( i );
@@ -465,7 +465,7 @@ public class AclDaoImpl implements AclDao {
      */
     private Map<ObjectIdentity, Acl> loadAcls( final Collection<ObjectIdentity> objectIdentities ) {
 
-        final Map<Serializable, Acl> results = new HashMap<Serializable, Acl>();
+        final Map<Serializable, Acl> results = new HashMap<>();
 
         Set<String> types = new HashSet<>();
         Set<Serializable> ids = new HashSet<>();
@@ -572,7 +572,7 @@ public class AclDaoImpl implements AclDao {
             loadAcls( results, parentIdsToLookup );
         }
 
-        Map<ObjectIdentity, Acl> resultMap = new HashMap<ObjectIdentity, Acl>();
+        Map<ObjectIdentity, Acl> resultMap = new HashMap<>();
         for ( Acl inputAcl : results.values() ) {
             resultMap.put( inputAcl.getObjectIdentity(), inputAcl );
         }
@@ -623,7 +623,14 @@ public class AclDaoImpl implements AclDao {
             AclObjectIdentity aoi = ( AclObjectIdentity ) oi;
 
             if ( aoi.getParentObject() != null ) {
-                assert acls.containsKey( aoi.getParentObject().getId() );
+                // this used to be an assertion, source of failures not clear...
+                if ( !acls.containsKey( aoi.getParentObject().getId() ) ) {
+                    throw new IllegalStateException(
+                            "ACLs did not contain key for parent object identity of " + aoi + "( parent = " + aoi.getParentObject() + "); "
+                                    + "ACLs being inspected: " + StringUtils.collectionToDelimitedString( acls.values(), "\n" ) );
+                }
+                // end assertion
+                
                 Acl parentAcl = acls.get( aoi.getParentObject().getId() );
                 assert !acl.equals( parentAcl );
                 acl.setParent( parentAcl );

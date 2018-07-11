@@ -156,7 +156,8 @@ public class AclServiceImpl implements AclService {
      * (non-Javadoc)
      * 
      * @see
-     * org.springframework.security.acls.model.AclService#readAclById(org.springframework.security.acls.model.ObjectIdentity
+     * org.springframework.security.acls.model.AclService#readAclById(org.springframework.security.acls.model.
+     * ObjectIdentity
      * )
      */
     @Override
@@ -283,11 +284,19 @@ public class AclServiceImpl implements AclService {
             // / AclObjectIdentity aoi = new AclObjectIdentity( key.getType(), key.getIdentifier() );
 
             if ( !result.containsKey( key ) ) {
-                log.debug( "ACL result size " + result.keySet().size() );
+                if ( log.isDebugEnabled() ) log.debug( "ACL result size " + result.keySet().size() );
                 if ( result.keySet().size() > 0 ) {
-                    log.debug( "ACL result first key " + result.keySet().iterator().next() );
+                    if ( log.isDebugEnabled() ) log.debug( "ACL result first key " + result.keySet().iterator().next() );
                 }
-                throw new NotFoundException( "Unable to find ACL information for object identity '" + key + "'" );
+
+                /*
+                 * This can possibly happen if we request an object that was deleted and we ask for it again
+                 * (cache out of sync, etc.). Rather than throwing an exception we just silently continue. In effect, no
+                 * access can be granted to objects that lack ACLs. We may change this behaviour to return a null value
+                 * in the result map, which makes it more explicit to the caller.
+                 */
+                // throw new NotFoundException( "No ACL for '" + key + "'" );
+                log.warn( "No ACL for '" + key + "'" );
             }
 
             assert result.get( key ) != null;
