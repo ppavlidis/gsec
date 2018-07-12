@@ -299,7 +299,7 @@ public class AclServiceImpl implements AclService {
                 log.warn( "No ACL for '" + key + "'" );
             }
 
-            assert result.get( key ) != null;
+            // assert result.get( key ) != null;
         }
 
         return result;
