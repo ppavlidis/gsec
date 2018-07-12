@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  * Indicates that a value object represents a Securable so security filtering can be provided during reading.
- * 
+ *
  * @author cmcdonald
  * @version $Id: SecureValueObject.java,v 1.5 2013/09/14 16:55:17 paul Exp $
  */

@@ -1,8 +1,8 @@
 /*
  * The Gemma_sec1 project
- * 
+ *
  * Copyright (c) 2009 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,14 +18,14 @@
  */
 package gemma.gsec.authentication;
 
-import gemma.gsec.model.User;
-import gemma.gsec.model.UserGroup;
-
 import java.util.Collection;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.GroupManager;
 import org.springframework.security.provisioning.UserDetailsManager;
+
+import gemma.gsec.model.User;
+import gemma.gsec.model.UserGroup;
 
 /**
  * @author paul
@@ -60,7 +60,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
 
     /**
      * Need a passthrough method to userService else we get a circular dependancy issue at runtime startup.
-     * 
+     *
      * @param userName
      * @return
      */
@@ -68,7 +68,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
 
     /**
      * Need a passthrough method to userService else we get a circular dependancy issue at runtime startup.
-     * 
+     *
      * @param name
      * @return
      */
@@ -82,7 +82,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
 
     /**
      * Generate a token that can be used to check if the user's email is valid.
-     * 
+     *
      * @param username
      * @return
      */
@@ -95,7 +95,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
 
     /**
      * Returns a String username (the principal).
-     * 
+     *
      * @return
      */
     public String getCurrentUsername();
@@ -113,7 +113,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
 
     /**
      * Need a passthrough method to userService else we get a circular dependency issue at runtime startup.
-     * 
+     *
      * @return
      */
     public <T extends User> Collection<T> loadAll();
@@ -122,7 +122,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
 
     /**
      * Sign in the user identified
-     * 
+     *
      * @param userName
      * @param password
      */
@@ -136,7 +136,7 @@ public interface UserManager extends UserDetailsManager, GroupManager {
 
     /**
      * Validate the token.
-     * 
+     *
      * @param username
      * @param key
      * @return true if okay, false otherwise

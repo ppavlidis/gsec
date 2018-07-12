@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2010-2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,7 +75,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.MutableAclService#createAcl(org.springframework.security.acls.model.
      * ObjectIdentity)
      */
@@ -110,7 +110,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.MutableAclService#deleteAcl(org.springframework.security.acls.model.
      * ObjectIdentity, boolean)
      */
@@ -123,7 +123,7 @@ public class AclServiceImpl implements AclService {
 
     /**
      * Remove a sid and all associated ACEs.
-     * 
+     *
      * @param sid
      */
     @Override
@@ -154,7 +154,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.springframework.security.acls.model.AclService#readAclById(org.springframework.security.acls.model.
      * ObjectIdentity
@@ -173,7 +173,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.AclService#readAclsById(java.util.List)
      */
     @Override
@@ -183,7 +183,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.AclService#readAclsById(java.util.List, java.util.List)
      */
     @Override
@@ -191,6 +191,7 @@ public class AclServiceImpl implements AclService {
             throws NotFoundException {
 
         if ( TransactionSynchronizationManager.isActualTransactionActive() ) {
+            if ( log.isDebugEnabled() ) log.debug( "Retrieving ACLs in an existing transaction" );
             return doReadAcls( objects, sids );
         }
 
@@ -199,6 +200,7 @@ public class AclServiceImpl implements AclService {
             @Override
             public Map<ObjectIdentity, Acl> doInTransaction( TransactionStatus status ) {
                 // deals with cache.
+                if ( log.isDebugEnabled() ) log.debug( "Retrieving ACLs in a new transaction" );
                 return doReadAcls( objects, sids );
             }
 
@@ -208,7 +210,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.MutableAclService#updateAcl(org.springframework.security.acls.model.
      * MutableAcl)
      */
@@ -229,19 +231,8 @@ public class AclServiceImpl implements AclService {
     }
 
     /**
-     * @param acl
-     * @return
-     */
-    private MutableAcl doUpdateAcl( MutableAcl acl ) {
-        assert TransactionSynchronizationManager.isActualTransactionActive();
-        Assert.notNull( acl.getId(), "Object Identity doesn't provide an identifier" );
-        aclDao.update( acl );
-        return acl;
-    }
-
-    /**
      * Persist
-     * 
+     *
      * @param object
      * @param owner
      * @return persistent objectIdentity (will be an AclObjectIdentity)
@@ -254,7 +245,7 @@ public class AclServiceImpl implements AclService {
 
     /**
      * Retrieves the primary key from acl_sid, creating a new row if needed and the allowCreate property is true.
-     * 
+     *
      * @param sid to find or create
      * @param allowCreate true if creation is permitted if not found
      * @return the primary key or null if not found
@@ -276,7 +267,7 @@ public class AclServiceImpl implements AclService {
     private Map<ObjectIdentity, Acl> doReadAcls( final List<ObjectIdentity> objects, final List<Sid> sids ) {
         Map<ObjectIdentity, Acl> result = aclDao.readAclsById( objects, sids );
 
-        // Check every requested object identity was found (throw NotFoundException if needed)
+        // Check every requested object identity was found
         for ( int i = 0; i < objects.size(); i++ ) {
             ObjectIdentity key = objects.get( i );
 
@@ -290,10 +281,10 @@ public class AclServiceImpl implements AclService {
                 }
 
                 /*
-                 * This can possibly happen if we request an object that was deleted and we ask for it again
-                 * (cache out of sync, etc.). Rather than throwing an exception we just silently continue. In effect, no
-                 * access can be granted to objects that lack ACLs. We may change this behaviour to return a null value
-                 * in the result map, which makes it more explicit to the caller.
+                 * This can happen when objects or new (normal) or if we request an object that was deleted and we ask
+                 * for it again (cache out of sync, etc.). Rather than throwing an exception we just silently continue.
+                 * In effect, no access can be granted to objects that lack ACLs. We may change this behaviour to return
+                 * a null value in the result map, which makes it more explicit to the caller.
                  */
                 // throw new NotFoundException( "No ACL for '" + key + "'" );
                 log.warn( "No ACL for '" + key + "'" );
@@ -303,6 +294,17 @@ public class AclServiceImpl implements AclService {
         }
 
         return result;
+    }
+
+    /**
+     * @param acl
+     * @return
+     */
+    private MutableAcl doUpdateAcl( MutableAcl acl ) {
+        assert TransactionSynchronizationManager.isActualTransactionActive();
+        Assert.notNull( acl.getId(), "Object Identity doesn't provide an identifier" );
+        aclDao.update( acl );
+        return acl;
     }
 
     private ObjectIdentity find( ObjectIdentity oid ) {

@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2008-2010 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,10 +17,6 @@
  *
  */
 package gemma.gsec.acl.afterinvocation;
-
-import gemma.gsec.SecurityService;
-import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
-import gemma.gsec.model.Securable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,11 +34,15 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
+import gemma.gsec.SecurityService;
+import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
+import gemma.gsec.model.Securable;
+
 /**
  * Subclass this when you want to filter collections based not on the security of the object itself, but by an
  * associated object. For example, a collection of CompositeSequences is filtered based on security of the associated
  * ArrayDesign.
- * 
+ *
  * @author Paul
  * @version $Id: ByAssociationFilteringProvider.java,v 1.5 2013/09/14 16:56:01 paul Exp $
  */
@@ -60,7 +60,7 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
 
     /**
      * Decides whether user has access to object based on owning object (for composition relationships).
-     * 
+     *
      * @param authentication
      * @param object
      * @param config
@@ -93,16 +93,16 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
                 boolean wasSingleton = false;
                 if ( returnedObject instanceof Collection ) {
                     Collection<A> collection = ( Collection<A> ) returnedObject;
-                    filterer = new CollectionFilterer<A>( collection );
+                    filterer = new CollectionFilterer<>( collection );
                 } else if ( returnedObject.getClass().isArray() ) {
                     A[] array = ( A[] ) returnedObject;
-                    filterer = new ArrayFilterer<A>( array );
+                    filterer = new ArrayFilterer<>( array );
                 } else {
                     // shortcut, just put the object in a collection. (PP)
                     wasSingleton = true;
-                    Collection<A> coll = new HashSet<A>();
+                    Collection<A> coll = new HashSet<>();
                     coll.add( ( A ) returnedObject );
-                    filterer = new CollectionFilterer<A>( coll );
+                    filterer = new CollectionFilterer<>( coll );
                 }
 
                 List<Boolean> hasPerms = getDomainObjectPermissionDecisions( authentication, filterer );
@@ -127,7 +127,7 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
     /**
      * This base implementation supports any type of class, because it does not query the presented secure object.
      * Subclasses can provide a more specific implementation.
-     * 
+     *
      * @param clazz the secure object
      * @return always <code>true</code>
      */
@@ -139,7 +139,7 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
     /**
      * Called by the AbstractSecurityInterceptor at startup time to determine of AfterInvocationManager can process the
      * ConfigAttribute.
-     * 
+     *
      * @param attribute
      * @return boolean
      */
@@ -153,36 +153,11 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
 
     /**
      * Given one of the input objects (which is not securable) return the associated securable.
-     * 
+     *
      * @param targetDomainObject
      * @return
      */
     protected abstract T getAssociatedSecurable( Object targetDomainObject );
-
-    /**
-     * Save time by getting the associated (parent) domain objects. Often there is just one; or a small number compared
-     * to the large number of targetdomainobjects.
-     * <p>
-     * Problem: I wanted to use a Set so I would check permissions for the minimum number of objects. However, we're not
-     * in a transaction here, so the Securables are often proxies. So we can't hash them.
-     * 
-     * @param authentication
-     * @param filterer
-     * @return list of booleans in same order as the filterer's iterator. True if haspermissions, false otherwise.
-     */
-    private List<Boolean> getDomainObjectPermissionDecisions( Authentication authentication, Filterer<A> filterer ) {
-        // collect up the securables.
-        Iterator<A> collectionIter = filterer.iterator();
-        List<T> domainObjects = new ArrayList<>( 100 );
-        while ( collectionIter.hasNext() ) {
-            A targetDomainObject = collectionIter.next();
-            T domainObject = getAssociatedSecurable( targetDomainObject );
-            domainObjects.add( domainObject );
-        }
-
-        List<Boolean> hasPerm = securityService.hasPermission( domainObjects, this.requirePermission, authentication );
-        return hasPerm;
-    }
 
     /**
      * @param filterer
@@ -209,5 +184,30 @@ public abstract class ByAssociationFilteringProvider<T extends Securable, A> ext
             }
             i++;
         }
+    }
+
+    /**
+     * Save time by getting the associated (parent) domain objects. Often there is just one; or a small number compared
+     * to the large number of targetdomainobjects.
+     * <p>
+     * Problem: I wanted to use a Set so I would check permissions for the minimum number of objects. However, we're not
+     * in a transaction here, so the Securables are often proxies. So we can't hash them.
+     *
+     * @param authentication
+     * @param filterer
+     * @return list of booleans in same order as the filterer's iterator. True if haspermissions, false otherwise.
+     */
+    private List<Boolean> getDomainObjectPermissionDecisions( Authentication authentication, Filterer<A> filterer ) {
+        // collect up the securables.
+        Iterator<A> collectionIter = filterer.iterator();
+        List<T> domainObjects = new ArrayList<>( 100 );
+        while ( collectionIter.hasNext() ) {
+            A targetDomainObject = collectionIter.next();
+            T domainObject = getAssociatedSecurable( targetDomainObject );
+            domainObjects.add( domainObject );
+        }
+
+        List<Boolean> hasPerm = securityService.hasPermission( domainObjects, this.requirePermission, authentication );
+        return hasPerm;
     }
 }

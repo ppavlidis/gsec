@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2006 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A filter used to filter Maps by their keys.
- * 
+ *
  * @author Paul, modeled after Acegi code
  * @version $Id: MapFilterer.java,v 1.3 2012/05/27 02:58:03 paul Exp $
  */
@@ -55,7 +55,7 @@ public class MapFilterer<T> implements Filterer<T> {
         // to the method may not necessarily be re-constructable (as
         // the Collection(collection) constructor is not guaranteed and
         // manually adding may lose sort order or other capabilities)
-        removeList = new HashSet<T>();
+        removeList = new HashSet<>();
     }
 
     // ~ Methods ================================================================

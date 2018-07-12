@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2006 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,33 +23,33 @@ import org.springframework.dao.DataAccessException;
 /**
  * Class to handle many crud operations on complex Gemma-domain entities (reading is only supported using 'find(entity)'
  * methods).
- * 
+ *
  * @author pavlidis
  * @version $Id: CrudHelper.java,v 1.1 2006/09/11 21:34:34 paul Exp $
  */
 public interface CrudHelper<E> {
 
     /**
-     * Locate an object in the system, based on the business key from the template entity passed in.
-     * 
+     * Make a new entity persistent, including all of its associated objects, checking all business keys first to make
+     * sure the same data isn't inserted twice. If an entity (or associated object) is encountered that matches a object
+     * in the database, it will be replaced with the persistent version. Any data in the existing versions will be
+     * overwritten.
+     *
      * @param entity
      * @return
-     * @throws DataAccessException if the entity passed in is already persistent.
+     * @throws DataAccessException If the entity passed is already persistent
      */
-    public E find( E entity ) throws DataAccessException;
+    public E cascadeCreateOrUpdate( E entity ) throws DataAccessException;
 
     /**
-     * Make a new entity persistent, checking the business key first. If an entity is passed that matches a object in
-     * the database, the persistent version will be returned. Any data in the existing versions <em>not</em> be
-     * updated. Otherwise, the entity will be created. Any cascading behavior resulting from the 'create' is not
-     * directly addressed by this method but is assumed to be handled by the relational manager - associations are not
-     * checked.
-     * 
+     * Update the state of a persistent entity, including all of its associated objects. If any of the associated
+     * objects are not persistent, they are made persistent. The state of the existing objects are overwritten as in
+     * normal update.
+     *
      * @param entity
-     * @return
-     * @throws DataAccessException
+     * @throws DataAccessException If the entity that is passed in is not persistent
      */
-    public E findOrCreate( E entity ) throws DataAccessException;
+    public void cascadeUpdate( E entity ) throws DataAccessException;
 
     /**
      * Make a new entity persistent, checking the business key first. If an entity is passed that matches a object in
@@ -63,7 +63,7 @@ public interface CrudHelper<E> {
      * doesn't do an update), and fill in the associations manually.
      * <p>
      * If you want the associations checked and persisted explicitly, use cascadeCreateOrUpdate.
-     * 
+     *
      * @param entity
      * @return
      * @throws DataAccessException
@@ -71,16 +71,36 @@ public interface CrudHelper<E> {
     public E createOrUpdate( E entity ) throws DataAccessException;
 
     /**
-     * Make a new entity persistent, including all of its associated objects, checking all business keys first to make
-     * sure the same data isn't inserted twice. If an entity (or associated object) is encountered that matches a object
-     * in the database, it will be replaced with the persistent version. Any data in the existing versions will be
-     * overwritten.
-     * 
+     * Delete an entity from the persistent store. Associated objects are not explicitly altered unless they maintain a
+     * reference to the entity that would result in a foreign key constraint violation. Any cascading behavior is not
+     * directly addressed by this method but is assumed to be handled by the back end (e.g., Hibernate).
+     *
+     * @param entity
+     * @throws IllegalArgumentException if the entity is not persistent.
+     */
+    public void delete( E entity ) throws IllegalArgumentException;
+
+    /**
+     * Locate an object in the system, based on the business key from the template entity passed in.
+     *
      * @param entity
      * @return
-     * @throws DataAccessException If the entity passed is already persistent
+     * @throws DataAccessException if the entity passed in is already persistent.
      */
-    public E cascadeCreateOrUpdate( E entity ) throws DataAccessException;
+    public E find( E entity ) throws DataAccessException;
+
+    /**
+     * Make a new entity persistent, checking the business key first. If an entity is passed that matches a object in
+     * the database, the persistent version will be returned. Any data in the existing versions <em>not</em> be
+     * updated. Otherwise, the entity will be created. Any cascading behavior resulting from the 'create' is not
+     * directly addressed by this method but is assumed to be handled by the relational manager - associations are not
+     * checked.
+     *
+     * @param entity
+     * @return
+     * @throws DataAccessException
+     */
+    public E findOrCreate( E entity ) throws DataAccessException;
 
     /**
      * Make a new entity persistent, including all of its associated objects, but business keys are <em>not</em>
@@ -89,7 +109,7 @@ public interface CrudHelper<E> {
      * Hibernate).
      * <p>
      * This method should only be used if you are sure the data is new in the system.
-     * 
+     *
      * @param entity
      * @return
      * @throws IllegalArgumentException If the entity passed is already persistent, or any of the associated objects are
@@ -98,36 +118,16 @@ public interface CrudHelper<E> {
     public E strictCreate( E entity ) throws IllegalArgumentException;
 
     /**
-     * Update the state of a persistent entity, including all of its associated objects. If any of the associated
-     * objects are not persistent, they are made persistent. The state of the existing objects are overwritten as in
-     * normal update.
-     * 
-     * @param entity
-     * @throws DataAccessException If the entity that is passed in is not persistent
-     */
-    public void cascadeUpdate( E entity ) throws DataAccessException;
-
-    /**
      * Update the state of a persistent entity, including all of its associated objects, all of which must already be
      * persistent. The state of the existing objects are overwritten as in normal update.
      * <p>
      * If you have updated a collection associated with the entity (one-to-many for example), this method will not
      * result in the collection being updated unless this is handled by the relational backend (e.g., Hibernate).
      * Instead use
-     * 
+     *
      * @param entity
      * @throws DataAccessException If any of the associated objects are not persistent
      */
     public void strictUpdate( E entity ) throws DataAccessException;
-
-    /**
-     * Delete an entity from the persistent store. Associated objects are not explicitly altered unless they maintain a
-     * reference to the entity that would result in a foreign key constraint violation. Any cascading behavior is not
-     * directly addressed by this method but is assumed to be handled by the back end (e.g., Hibernate).
-     * 
-     * @param entity
-     * @throws IllegalArgumentException if the entity is not persistent.
-     */
-    public void delete( E entity ) throws IllegalArgumentException;
 
 }

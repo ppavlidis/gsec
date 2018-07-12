@@ -1,8 +1,8 @@
 /*
  * The Gemma project.
- * 
+ *
  * Copyright (c) 2006-2007 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -74,7 +74,7 @@ public class UserServiceException extends java.lang.RuntimeException {
 
     /**
      * Constructs a new instance of <code>UserServiceException</code>.
-     * 
+     *
      * @param message the throwable message.
      */
     public UserServiceException( String message ) {
@@ -83,7 +83,7 @@ public class UserServiceException extends java.lang.RuntimeException {
 
     /**
      * Constructs a new instance of <code>UserServiceException</code>.
-     * 
+     *
      * @param message the throwable message.
      * @param throwable the parent of this Throwable.
      */
@@ -93,7 +93,7 @@ public class UserServiceException extends java.lang.RuntimeException {
 
     /**
      * Constructs a new instance of <code>UserServiceException</code>.
-     * 
+     *
      * @param throwable the parent Throwable
      */
     public UserServiceException( Throwable throwable ) {

@@ -1,13 +1,13 @@
 /*
  * The gemma-mda project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
@@ -33,14 +33,14 @@ import org.springframework.util.Assert;
 
 /**
  * Represents an access control list (ACL) for a domain object. Based on spring-security AclImpl.
- * 
+ *
  * @author Paul
  * @version $Id: AclImpl.java,v 1.1 2013/09/14 16:55:20 paul Exp $
  */
 public class AclImpl implements OwnershipAcl {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -953242274878593548L;
     private transient AclAuthorizationStrategy aclAuthorizationStrategy;
@@ -50,7 +50,7 @@ public class AclImpl implements OwnershipAcl {
 
     /**
      * Full constructor
-     * 
+     *
      * @param objectIdentity the object identity this ACL relates to (required)
      * @param id the primary key assigned to this ACL (required)
      * @param aclAuthorizationStrategy authorization strategy (required)
@@ -89,7 +89,7 @@ public class AclImpl implements OwnershipAcl {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -155,7 +155,7 @@ public class AclImpl implements OwnershipAcl {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.Acl#getObjectIdentity()
      */
     @Override
@@ -233,7 +233,7 @@ public class AclImpl implements OwnershipAcl {
      * also scan its parent and so on. If ultimately no matching ACE is found, a <code>NotFoundException</code> will be
      * thrown and the caller will need to decide how to handle the permission check. Similarly, if any of the SID
      * arguments presented to the method were not loaded by the ACL, <code>UnloadedSidException</code> will be thrown.
-     * 
+     *
      * @param permission the exact permissions to scan for (order is important)
      * @param sids the exact SIDs to scan for (order is important)
      * @param administrativeMode if <code>true</code> denotes the query is for administrative purposes and no auditing

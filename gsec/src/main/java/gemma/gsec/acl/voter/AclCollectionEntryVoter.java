@@ -1,8 +1,8 @@
 /*
  * The Gemma_sec1 project
- * 
+ *
  * Copyright (c) 2009 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +17,6 @@
  *
  */
 package gemma.gsec.acl.voter;
-
-import gemma.gsec.acl.AclSidRetrievalStrategyImpl;
-import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -46,6 +43,9 @@ import org.springframework.security.acls.model.SidRetrievalStrategy;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.StringUtils;
 
+import gemma.gsec.acl.AclSidRetrievalStrategyImpl;
+import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
+
 /**
  * Customized voter that looks at collections to see if permissions are present for objects contained in the collection;
  * the processDomainObjectClass set refers to the types of objects in the collection. getInternalMethod refers to a
@@ -62,7 +62,7 @@ import org.springframework.util.StringUtils;
  * members; otherwise DENIED. ABSTAIN will be returned if it isn't a Collection in the first place. Null collection
  * members are ignored. As with the superclass, an exception will be thrown if the collection members are not of the set
  * processDomainObjectClass type.
- * 
+ *
  * @author paul
  * @version $Id: AclCollectionEntryVoter.java,v 1.6 2013/09/14 16:56:03 paul Exp $
  * @see org.springframework.security.acls.AclEntryVoter -- this is basically the same thing with a revised vote method;
@@ -153,7 +153,7 @@ public class AclCollectionEntryVoter extends AbstractAclVoter {
 
     /*
      * Most of this is modified from the superclass vote method code.
-     * 
+     *
      * @see org.springframework.security.acls.AclEntryVoter#vote(org.springframework.security.core.Authentication,
      * java.lang.Object, java.util.Collection)
      */
@@ -256,7 +256,7 @@ public class AclCollectionEntryVoter extends AbstractAclVoter {
 
     /**
      * Get the collection from the invocation.
-     * 
+     *
      * @param secureObject
      * @return
      */

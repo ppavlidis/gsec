@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2008 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,10 +17,6 @@
  *
  */
 package gemma.gsec.acl.afterinvocation;
-
-import gemma.gsec.SecurityService;
-import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
-import gemma.gsec.model.Securable;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,10 +35,14 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
+import gemma.gsec.SecurityService;
+import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
+import gemma.gsec.model.Securable;
+
 /**
  * Filter out public {@link Securables}s, leaving only ones that the user owns and can edit. This is used for the
  * "my data" list. Data sets that are only readable are omitted.
- * 
+ *
  * @author keshav
  * @version $Id: AclAfterFilterCollectionForMyData.java,v 1.9 2013/09/14 16:56:01 paul Exp $
  * @see AfterInvocationProvider
@@ -62,7 +62,7 @@ public class AclAfterFilterCollectionForMyData extends AbstractAclProvider {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @seeorg.springframework.security.afterinvocation.AfterInvocationProvider#decide(org.springframework.security.
      * Authentication, java.lang.Object, org.springframework.security.ConfigAttributeDefinition, java.lang.Object)
      */
@@ -88,16 +88,16 @@ public class AclAfterFilterCollectionForMyData extends AbstractAclProvider {
                 boolean wasSingleton = false;
                 if ( returnedObject instanceof Collection ) {
                     Collection<Object> collection = ( Collection<Object> ) returnedObject;
-                    filterer = new CollectionFilterer<Object>( collection );
+                    filterer = new CollectionFilterer<>( collection );
                 } else if ( returnedObject.getClass().isArray() ) {
                     Object[] array = ( Object[] ) returnedObject;
-                    filterer = new ArrayFilterer<Object>( array );
+                    filterer = new ArrayFilterer<>( array );
                 } else {
                     // shortcut, just put the object in a collection. (PP)
                     wasSingleton = true;
-                    Collection<Object> coll = new HashSet<Object>();
+                    Collection<Object> coll = new HashSet<>();
                     coll.add( returnedObject );
-                    filterer = new CollectionFilterer<Object>( coll );
+                    filterer = new CollectionFilterer<>( coll );
                 }
 
                 // Locate unauthorised Collection elements
@@ -106,7 +106,7 @@ public class AclAfterFilterCollectionForMyData extends AbstractAclProvider {
                 /*
                  * Collect up the securables
                  */
-                Collection<Securable> securablesToFilter = new HashSet<Securable>();
+                Collection<Securable> securablesToFilter = new HashSet<>();
                 while ( collectionIter.hasNext() ) {
                     Object domainObject = collectionIter.next();
                     if ( !Securable.class.isAssignableFrom( domainObject.getClass() ) ) {

@@ -19,7 +19,7 @@ import java.util.Iterator;
 /**
  * Filter strategy interface. See org.springframework.security.acls.afterinvocation. Filterer, which is not part of the
  * public spring-security API so we have to put it here.
- * 
+ *
  * @author Ben Alex
  * @author Paulo Neves
  * @version $Id: Filterer.java,v 1.3 2010/03/11 03:41:30 paul Exp $
@@ -30,14 +30,14 @@ interface Filterer<T> extends Iterable<T> {
 
     /**
      * Gets the filtered collection or array.
-     * 
+     *
      * @return the filtered collection or array
      */
     Object getFilteredObject();
 
     /**
      * Returns an iterator over the filtered collection or array.
-     * 
+     *
      * @return an Iterator
      */
     @Override
@@ -45,7 +45,7 @@ interface Filterer<T> extends Iterable<T> {
 
     /**
      * Removes the the given object from the resulting list.
-     * 
+     *
      * @param object the object to be removed
      */
     void remove( T object );

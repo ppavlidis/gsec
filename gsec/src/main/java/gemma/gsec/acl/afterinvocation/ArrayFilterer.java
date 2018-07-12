@@ -25,7 +25,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A filter used to filter arrays. (This repeats code in a private class of spring security)
- * 
+ *
  * @author Ben Alex
  * @author Paulo Neves
  * @version $Id: ArrayFilterer.java,v 1.4 2012/05/27 02:58:03 paul Exp $
@@ -43,7 +43,7 @@ public class ArrayFilterer<T> implements Filterer<T> {
         // Collect the removed objects to a HashSet so that
         // it is fast to lookup them when a filtered array
         // is constructed.
-        removeList = new HashSet<T>();
+        removeList = new HashSet<>();
     }
 
     /**

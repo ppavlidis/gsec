@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2006 Columbia University
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ import org.springframework.security.access.vote.AuthenticatedVoter;
  * Administrators, Users, and Agents. Anonymous is another
  * <p>
  * Some of these values are originally set by init-entities.sql
- * 
+ *
  * @author klc, paul
  * @version $Id: AuthorityConstants.java,v 1.6 2013/08/21 23:22:22 paul Exp $
  * @see org.springframework.security.core.GrantedAuthority
@@ -67,7 +67,7 @@ public class AuthorityConstants {
     /**
      * Name of the 'group' for anonymous users. Note: we don't use this; you should use
      * AuthenticatedVoter.IS_AUTHENTICATED_ANONYMOUSLY instead.
-     * 
+     *
      * @see org.springframework.security.access.vote.AuthenticatedVoter.IS_AUTHENTICATED_ANONYMOUSLY
      */
     public static final String ANONYMOUS_GROUP_AUTHORITY = "GROUP_ANONYMOUS";
@@ -78,7 +78,7 @@ public class AuthorityConstants {
     public static final String RUN_AS_ADMIN_AUTHORITY = "GROUP_RUN_AS_ADMIN";
 
     /**
-     * 
+     *
      */
     public static final String AGENT_GROUP_AUTHORITY = "GROUP_AGENT";
 

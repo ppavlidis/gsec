@@ -1,13 +1,13 @@
 /*
  * The gemma-mda project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
@@ -53,7 +53,7 @@ import org.springframework.util.StringUtils;
  * <blockquote> The default JDBCTemplate based implementation of Spring Security ACLs removes and recreates the entire
  * ACL for each update. That requires both deletes and inserts into the same table within the same JPA transaction and
  * is a recipe for deadlock when using the default MySQL transaction isolation level of REPEATABLE_READ. </blockquote>
- * 
+ *
  * @author Paul
  */
 @Component(value = "aclDao")
@@ -77,7 +77,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.model.common.auditAndSecurity.acl.AclDao#createObjectIdentity(java.lang.String,
      * java.io.Serializable, org.springframework.security.acls.model.Sid, java.lang.Boolean)
      */
@@ -93,7 +93,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ubic.gemma.model.common.auditAndSecurity.acl.AclDao#delete(org.springframework.security.acls.model.ObjectIdentity
      * , boolean)
@@ -119,7 +119,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.model.common.auditAndSecurity.acl.AclDao#delete(org.springframework.security.acls.model.Sid)
      */
     @Override
@@ -160,7 +160,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ubic.gemma.model.common.auditAndSecurity.acl.AclDao#find(org.springframework.security.acls.model.ObjectIdentity)
      */
@@ -176,7 +176,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.model.common.auditAndSecurity.acl.AclDao#find(org.springframework.security.acls.model.Sid)
      */
     @Override
@@ -203,7 +203,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.model.common.auditAndSecurity.acl.AclDao#findChildren(org.springframework.security.acls.model.
      * ObjectIdentity)
      */
@@ -229,7 +229,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ubic.gemma.model.common.auditAndSecurity.acl.AclDao#findOrCreate(org.springframework.security.acls.model.Sid)
      */
@@ -252,11 +252,11 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.jdbc.LookupStrategy#readAclsById(java.util.List, java.util.List)
-     * 
+     *
      * Note that the objects here are not persistent - they need to be populated from the db.
-     * 
+     *
      * argument sids is ignored by this implementation
      */
     @Override
@@ -318,7 +318,7 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.model.common.auditAndSecurity.acl.AclDao#setSessionFactory(org.hibernate.SessionFactory)
      */
     @Override
@@ -328,11 +328,11 @@ public class AclDaoImpl implements AclDao {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ubic.gemma.model.common.auditAndSecurity.acl.AclDao#update(org.springframework.security.acls.model.MutableAcl)
-     * 
-     * 
+     *
+     *
      * This is an important method, and one that causes problems in the default JDBC-based service from spring-security.
      */
     @Override
@@ -426,7 +426,7 @@ public class AclDaoImpl implements AclDao {
 
     /**
      * Does not check the cache;
-     * 
+     *
      * @param oi
      * @return
      */
@@ -440,7 +440,7 @@ public class AclDaoImpl implements AclDao {
 
     /**
      * ... including children, recursively.
-     * 
+     *
      * @param aclObjectIdentity
      */
     private void evictFromCache( ObjectIdentity aclObjectIdentity ) {
@@ -460,7 +460,7 @@ public class AclDaoImpl implements AclDao {
      * doesn't contain them already, and adding the returned elements to the cache etc.
      * <p>
      * This is required to return fully valid <code>Acl</code>s, including properly-configured parent ACLs.
-     * 
+     *
      * @param objectIdentities a batch of OIs to fetch ACLs for.
      */
     private Map<ObjectIdentity, Acl> loadAcls( final Collection<ObjectIdentity> objectIdentities ) {
@@ -581,7 +581,7 @@ public class AclDaoImpl implements AclDao {
 
     /**
      * Load ACLs when we know the primary key of the objectIdentity. Recursively fill in the parentAcls.
-     * 
+     *
      * @param acls the starting set of acls.
      * @param objectIdentityIds primary keys of the object identities to be fetched. If these yield acls that are the
      *        parents of the given acls, they will be populated.
@@ -630,7 +630,7 @@ public class AclDaoImpl implements AclDao {
                                     + "ACLs being inspected: " + StringUtils.collectionToDelimitedString( acls.values(), "\n" ) );
                 }
                 // end assertion
-                
+
                 Acl parentAcl = acls.get( aoi.getParentObject().getId() );
                 assert !acl.equals( parentAcl );
                 acl.setParent( parentAcl );

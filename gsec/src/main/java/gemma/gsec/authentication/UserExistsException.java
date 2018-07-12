@@ -1,13 +1,13 @@
 /*
  * The aspiredb project
- * 
+ *
  * Copyright (c) 2012 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
@@ -19,7 +19,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 /**
  * TODO Document Me
- * 
+ *
  * @author cmcdonald
  * @version $Id: UserExistsException.java,v 1.2 2013/06/11 22:56:00 anton Exp $
  */
@@ -74,7 +74,7 @@ public class UserExistsException extends java.lang.Exception {
 
     /**
      * Constructs a new instance of UserExistsException
-     * 
+     *
      * @param message the throwable message.
      */
     public UserExistsException( String message ) {
@@ -83,7 +83,7 @@ public class UserExistsException extends java.lang.Exception {
 
     /**
      * Constructs a new instance of UserExistsException
-     * 
+     *
      * @param message the throwable message.
      * @param throwable the parent of this Throwable.
      */
@@ -93,7 +93,7 @@ public class UserExistsException extends java.lang.Exception {
 
     /**
      * Constructs a new instance of UserExistsException
-     * 
+     *
      * @param throwable the parent Throwable
      */
     public UserExistsException( Throwable throwable ) {

@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2006 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * Convenience methods needed to perform CRUD operations on entities.
- * 
+ *
  * @author pavlidis
  * @version $Id: CrudUtilsImpl.java,v 1.4 2013/07/24 00:42:33 paul Exp $
  */
@@ -55,7 +55,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
     private static Set<String> crudMethods;
 
     static {
-        crudMethods = new HashSet<String>();
+        crudMethods = new HashSet<>();
         crudMethods.add( "update" );
         crudMethods.add( "create" );
         crudMethods.add( "remove" );
@@ -84,7 +84,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /**
      * Test whether a method creates objects
-     * 
+     *
      * @param m
      * @return
      */
@@ -98,7 +98,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /**
      * Test whether a method is a CRUD method.
-     * 
+     *
      * @param m
      * @return
      */
@@ -109,7 +109,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /**
      * Test whether a method deletes objects
-     * 
+     *
      * @param m
      * @return
      */
@@ -124,7 +124,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
     /**
      * Test whether a method loads objects. Patterns accepted include "read", "find", "load*" (latter for load or
      * loadAll)
-     * 
+     *
      * @param m
      * @return
      */
@@ -138,7 +138,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /**
      * Test whether a method updates objects
-     * 
+     *
      * @param m
      * @return
      */
@@ -164,7 +164,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
      */
     @Override
@@ -176,7 +176,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.persistence.CrudUtils#getCollectionPersister(java.lang.String)
      */
     @Override
@@ -186,7 +186,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.persistence.CrudUtils#getEntityPersister(java.lang.Object)
      */
     @Override
@@ -200,7 +200,7 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.persistence.CrudUtils#needCascade(java.lang.String, org.hibernate.engine.CascadeStyle)
      */
     @Override
@@ -213,9 +213,15 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
         return needCascade( cs );
     }
 
+    @Override
+    public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
+        this.beanFactory = beanFactory;
+
+    }
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.persistence.CrudUtils#willCascade(org.hibernate.engine.CascadeStyle)
      */
     @Override
@@ -298,19 +304,13 @@ public class CrudUtilsImpl implements InitializingBean, CrudUtils, BeanFactoryAw
 
     /**
      * Determine if cascading an association is required.
-     * 
+     *
      * @param cs
      * @return
      */
     private boolean needCascade( CascadeStyle cs ) {
         return cs.doCascade( CascadingAction.PERSIST ) || cs.doCascade( CascadingAction.SAVE_UPDATE )
                 || cs.doCascade( CascadingAction.SAVE_UPDATE_COPY );
-    }
-
-    @Override
-    public void setBeanFactory( BeanFactory beanFactory ) throws BeansException {
-        this.beanFactory = beanFactory;
-
     }
 
 }

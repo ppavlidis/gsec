@@ -1,8 +1,8 @@
 /*
  * The gemma-mda project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,8 +19,6 @@
 
 package gemma.gsec.acl.domain;
 
-import gemma.gsec.model.Securable;
-
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -32,15 +30,17 @@ import org.springframework.security.acls.model.Sid;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
+import gemma.gsec.model.Securable;
+
 /**
  * TODO Document Me
- * 
+ *
  * @author Paul
  * @version $Id: AclObjectIdentity.java,v 1.1 2013/09/14 16:55:18 paul Exp $
  */
 public class AclObjectIdentity implements ObjectIdentity {
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -6715898560226971244L;
 
@@ -78,7 +78,7 @@ public class AclObjectIdentity implements ObjectIdentity {
      * tables. For polymorphic classes this will be a problem if the method returns the superclass, so use fetch all
      * properties. Example: PhenotypeAssociationDao. See chapter 19.1.3 of the Hibernate documentation for an
      * explanation about polymorphic classes and proxies.
-     * 
+     *
      * @param object
      */
     public AclObjectIdentity( Object object ) {
@@ -151,7 +151,7 @@ public class AclObjectIdentity implements ObjectIdentity {
 
     /**
      * Important so caching operates properly.
-     * 
+     *
      * @return the hash
      */
     @Override

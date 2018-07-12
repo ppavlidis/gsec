@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,17 +19,16 @@
 
 package gemma.gsec.acl;
 
-import gemma.gsec.acl.domain.AclObjectIdentity;
-import gemma.gsec.model.SecureValueObject;
-
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 
+import gemma.gsec.acl.domain.AclObjectIdentity;
+import gemma.gsec.model.SecureValueObject;
 
 /**
  * Customized to know how to deal with SecureValueObject, makes it easier to share code in SecurityService; and doesn't
  * use the default ObjectIdentityImpl.
- * 
+ *
  * @author Paul
  * @version $Id: ValueObjectAwareIdentityRetrievalStrategyImpl.java,v 1.3 2013/09/14 16:56:02 paul Exp $
  */
@@ -37,7 +36,7 @@ public class ValueObjectAwareIdentityRetrievalStrategyImpl implements ObjectIden
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy#getObjectIdentity(java.lang.Object)
      */
     @Override

@@ -1,21 +1,18 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
 package gemma.gsec.util;
-
-import gemma.gsec.AuthorityConstants;
-import gemma.gsec.acl.domain.AclGrantedAuthoritySid;
 
 import java.util.Collection;
 
@@ -30,9 +27,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import gemma.gsec.AuthorityConstants;
+import gemma.gsec.acl.domain.AclGrantedAuthoritySid;
+
 /**
  * Database-independent methods for ACLs
- * 
+ *
  * @author Paul
  * @version $Id: SecurityUtil.java,v 1.6 2013/09/14 16:56:04 paul Exp $
  */
@@ -41,8 +41,21 @@ public class SecurityUtil {
     private static AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
 
     /**
+     * Returns the username of the authenticated user
+     *
+     * @return
+     */
+    public static String getCurrentUsername() {
+        Object principal = getAuthentication().getPrincipal();
+        if ( principal instanceof String )
+            return ( String ) principal;
+        else if ( principal instanceof UserDetails ) return ( ( UserDetails ) principal ).getUsername();
+        throw new UnsupportedOperationException( "Principal is of unrecognized type" );
+    }
+
+    /**
      * Test whether the given ACL is constraining access to users who are at privileges above "anonymous".
-     * 
+     *
      * @param acl
      * @return true if the permissions indicate 'non-public', false if 'public'.
      */
@@ -131,7 +144,7 @@ public class SecurityUtil {
 
     /**
      * Returns true if the current user has admin authority.
-     * 
+     *
      * @return true if the current user has admin authority
      */
     public static boolean isUserAdmin() {
@@ -160,7 +173,7 @@ public class SecurityUtil {
 
     /**
      * Returns true if the user is non-anonymous.
-     * 
+     *
      * @return
      */
     public static boolean isUserLoggedIn() {
@@ -169,7 +182,7 @@ public class SecurityUtil {
 
     /**
      * Returns the Authentication object from the SecurityContextHolder.
-     * 
+     *
      * @return Authentication
      */
     private static Authentication getAuthentication() {
@@ -178,18 +191,5 @@ public class SecurityUtil {
         if ( authentication == null ) throw new RuntimeException( "Null authentication object" );
 
         return authentication;
-    }
-
-    /**
-     * Returns the username of the authenticated user
-     * 
-     * @return
-     */
-    public static String getCurrentUsername() {
-        Object principal = getAuthentication().getPrincipal();
-        if ( principal instanceof String )
-            return ( String ) principal;
-        else if ( principal instanceof UserDetails ) return ( ( UserDetails ) principal ).getUsername();
-        throw new UnsupportedOperationException( "Principal is of unrecognized type" );
     }
 }

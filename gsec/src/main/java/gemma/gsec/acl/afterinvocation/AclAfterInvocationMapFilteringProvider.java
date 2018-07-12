@@ -1,8 +1,8 @@
 /*
  * The Gemma_sec1 project
- * 
+ *
  * Copyright (c) 2009 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,9 +17,6 @@
  *
  */
 package gemma.gsec.acl.afterinvocation;
-
-import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
-import gemma.gsec.model.Securable;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -36,11 +33,14 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
+import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
+import gemma.gsec.model.Securable;
+
 /**
  * Like the AclEntryAfterInvocationCollectionFilteringProvider, but filters on the keys AND values of a Map, where the
  * keys are Securable and the values MAY be Securable. If your keys are non-securable, use
  * {@link AclAfterInvocationMapValueFilteringProvider}
- * 
+ *
  * @see org.springframework.security.acls.afterinvocation.AclEntryAfterInvocationCollectionFilteringProvider
  * @author paul
  * @version $Id: AclAfterInvocationMapFilteringProvider.java,v 1.11 2013/09/14 16:56:01 paul Exp $
@@ -58,9 +58,10 @@ public class AclAfterInvocationMapFilteringProvider extends AbstractAclProvider 
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
-     * org.springframework.security.access.AfterInvocationProvider#decide(org.springframework.security.core.Authentication
+     * org.springframework.security.access.AfterInvocationProvider#decide(org.springframework.security.core.
+     * Authentication
      * , java.lang.Object, java.util.Collection, java.lang.Object)
      */
     @Override
@@ -87,7 +88,7 @@ public class AclAfterInvocationMapFilteringProvider extends AbstractAclProvider 
 
                 if ( returnedObject instanceof Map ) {
                     map = ( Map<? extends Object, Object> ) returnedObject;
-                    filterer = new MapFilterer<Object>( ( Map<Object, Object> ) map );
+                    filterer = new MapFilterer<>( ( Map<Object, Object> ) map );
                 } else {
                     throw new AuthorizationServiceException( "A Map was required as the "
                             + "returnedObject, but the returnedObject was: " + returnedObject );

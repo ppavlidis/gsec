@@ -1,27 +1,25 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2012 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
 package gemma.gsec;
 
-import gemma.gsec.model.Securable;
-import gemma.gsec.model.SecureValueObject;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.acls.model.Acl;
 import org.springframework.security.acls.model.MutableAcl;
@@ -29,6 +27,9 @@ import org.springframework.security.acls.model.Permission;
 import org.springframework.security.acls.model.Sid;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
+
+import gemma.gsec.model.Securable;
+import gemma.gsec.model.SecureValueObject;
 
 /**
  * @author paul
@@ -57,7 +58,7 @@ public interface SecurityService {
     /**
      * A securable is considered "owned" if 1) the user is the actual owner assigned in the ACL or 2) the user is an
      * administrator. In other words, for an administrator, the value will always be true.
-     * 
+     *
      * @param securables
      * @return
      */
@@ -93,7 +94,7 @@ public interface SecurityService {
 
     /**
      * If the group already exists, an exception will be thrown.
-     * 
+     *
      * @param groupName
      */
     @Transactional
@@ -111,7 +112,7 @@ public interface SecurityService {
     /**
      * Note that this method cannot be secured, but as it only reads permissions on a securable already in scope, it is
      * safe.
-     * 
+     *
      * @param s
      * @return
      */
@@ -120,7 +121,7 @@ public interface SecurityService {
     /**
      * Note that this method cannot be secured, but as it only reads permissions on securables already in scope, it is
      * safe.
-     * 
+     *
      * @param securables, which could be securedvalueobjects
      * @return
      */
@@ -128,7 +129,7 @@ public interface SecurityService {
 
     /**
      * We make this available to anonymous
-     * 
+     *
      * @return
      */
     public abstract Integer getAuthenticatedUserCount();
@@ -141,7 +142,7 @@ public interface SecurityService {
 
     /**
      * This methods is only available to administrators.
-     * 
+     *
      * @return collection of all available security ids (basically, user names and group authorities.
      */
     @Secured("GROUP_ADMIN")
@@ -193,7 +194,7 @@ public interface SecurityService {
 
     /**
      * Pretty much have to be either the owner of the securables or administrator to call this.
-     * 
+     *
      * @param securables
      * @return
      * @throws AccessDeniedException if the current user is not allowed to access the information.
@@ -206,7 +207,7 @@ public interface SecurityService {
      * <p>
      * Implementation note: This deals with lists to avoid having to compute hashcodes on securables that might not be
      * thawed. But we do avoid fetching ACLs that are not needed.
-     * 
+     *
      * @param svos
      * @param requiredPermissions
      * @param authentication
@@ -265,7 +266,7 @@ public interface SecurityService {
 
     /**
      * Convenience method to determine the visibility of an object.
-     * 
+     *
      * @param s
      * @return true if anonymous users can view (READ) the object, false otherwise. If the object doesn't have an ACL,
      *         return true (be safe!)
@@ -275,7 +276,7 @@ public interface SecurityService {
 
     /**
      * Convenience method to determine the visibility of an object.
-     * 
+     *
      * @param s
      * @return the negation of isPrivate().
      */
@@ -300,7 +301,7 @@ public interface SecurityService {
      * done.
      * <p>
      * TODO: consider allowing a groupauthority to be the owner (GROUP_ADMIN) - see bug 2996
-     * 
+     *
      * @param s
      * @param userName
      */
@@ -314,7 +315,7 @@ public interface SecurityService {
 
     /**
      * Makes the object private.
-     * 
+     *
      * @param object
      */
     @Secured("ACL_SECURABLE_EDIT")
@@ -328,7 +329,7 @@ public interface SecurityService {
 
     /**
      * Makes the object public
-     * 
+     *
      * @param object
      */
     @Secured("ACL_SECURABLE_EDIT")
@@ -336,7 +337,7 @@ public interface SecurityService {
 
     /**
      * Adds read permission.
-     * 
+     *
      * @param s
      * @param groupName
      * @throws AccessDeniedException
@@ -346,7 +347,7 @@ public interface SecurityService {
 
     /**
      * Remove read permissions; also removes write permissions.
-     * 
+     *
      * @param s
      * @param groupName, with or without GROUP_
      * @throws AccessDeniedException
@@ -356,7 +357,7 @@ public interface SecurityService {
 
     /**
      * Remove write permissions. Leaves read permissions, if present.
-     * 
+     *
      * @param s
      * @param groupName
      * @throws AccessDeniedException
@@ -366,7 +367,7 @@ public interface SecurityService {
 
     /**
      * Adds write (and read) permissions.
-     * 
+     *
      * @param s
      * @param groupName
      * @throws AccessDeniedException
@@ -390,7 +391,7 @@ public interface SecurityService {
     /**
      * Change the 'owner' of an object to a specific user. Note that this doesn't support making the owner a
      * grantedAuthority.
-     * 
+     *
      * @param s
      * @param userName
      */

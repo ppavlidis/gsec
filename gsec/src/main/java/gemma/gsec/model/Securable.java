@@ -1,8 +1,8 @@
 /*
  * The Gemma_sec1 project
- * 
+ *
  * Copyright (c) 2009 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +20,7 @@ package gemma.gsec.model;
 
 /**
  * Interface that indicates an entity can be secured. By default, permissions are inherited by associated objects.
- * 
+ *
  * @author paul
  * @version $Id: Securable.java,v 1.4 2013/03/16 00:39:24 paul Exp $
  */

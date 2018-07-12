@@ -1,29 +1,18 @@
 /*
  * The gemma-core project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
  * the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
  * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
  * specific language governing permissions and limitations under the License.
  */
 package gemma.gsec.acl;
-
-import gemma.gsec.AuthorityConstants;
-import gemma.gsec.acl.domain.AclGrantedAuthoritySid;
-import gemma.gsec.acl.domain.AclPrincipalSid;
-import gemma.gsec.acl.domain.AclService;
-import gemma.gsec.model.Securable;
-import gemma.gsec.model.SecuredChild;
-import gemma.gsec.model.SecuredNotChild;
-import gemma.gsec.util.CrudUtils;
-import gemma.gsec.util.CrudUtilsImpl;
-import gemma.gsec.util.SecurityUtil;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
@@ -57,6 +46,17 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import gemma.gsec.AuthorityConstants;
+import gemma.gsec.acl.domain.AclGrantedAuthoritySid;
+import gemma.gsec.acl.domain.AclPrincipalSid;
+import gemma.gsec.acl.domain.AclService;
+import gemma.gsec.model.Securable;
+import gemma.gsec.model.SecuredChild;
+import gemma.gsec.model.SecuredNotChild;
+import gemma.gsec.util.CrudUtils;
+import gemma.gsec.util.CrudUtilsImpl;
+import gemma.gsec.util.SecurityUtil;
+
 /**
  * Adds security controls to newly created objects (including those created by updates to other objects via cascades),
  * and removes them for objects that are deleted. Methods in this interceptor are run for all new objects (to add
@@ -65,7 +65,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
  * This is designed to be reusable, but it's not trivial; it requires substantial care from the implementer who override
  * the protected methods. Looking at the AclAdvice in Gemma can give some ideas of what kinds of things have to be
  * handled.
- * 
+ *
  * @author keshav
  * @author pavlidis
  * @version $Id: BaseAclAdvice.java,v 1.1 2013/09/14 16:56:03 paul Exp $
@@ -167,7 +167,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     /**
      * Check for special cases of objects that don't need to be examined for associations at all, for efficiency when
      * following associations. Default implementation always returns false.
-     * 
+     *
      * @param object
      * @return
      */
@@ -177,7 +177,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * Check if the association may be skipped. Default implementation always returns false.
-     * 
+     *
      * @param object the target object which has the property
      * @param propertyName the name of the property to consider skipping
      * @return
@@ -190,7 +190,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * Subclasses can modify this to address special cases. Default implementation is a no-op.
      * <p>
      * FIXME this might not be necessary.
-     * 
+     *
      * @param acl may be modified by this call
      * @param parentAcl value may be changed by this call
      * @param sid value may be changed by this call
@@ -213,7 +213,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * For use by other overridden methods.
-     * 
+     *
      * @return
      */
     protected final AclService getAclService() {
@@ -232,7 +232,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * Implementers must decide which cases can be handled this way. Care is required: the parent might not be created
      * yet, in which case the cascade to s is surely going to fix it later. The best situation is when s has an accessor
      * to reach the parent.
-     * 
+     *
      * @param s which might have a parent already in the system
      * @return
      */
@@ -247,7 +247,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     /**
      * Forms the object identity to be inserted in acl_object_identity table. Note that this does not add an
      * ObjectIdentity to the database; it just calls 'new'.
-     * 
+     *
      * @param object A persistent object
      * @return object identity.
      */
@@ -270,7 +270,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * <li>If the current user is an adminisrator, and keepPrivateEvenWhenAdmin is false, the object gets READ
      * permissions for ANONYMOUS.
      * <li>If the current user is a "regular user" (non-admin) give them read/write permissions.
-     * 
+     *
      * @param acl
      * @param oi
      * @param sid
@@ -327,7 +327,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * For cases where don't have a cascade but the other end is securable, so we <em>must</em> check the association.
      * For example, when we persist an EE we also persist any new ADs in the same transaction. Thus the ADs need ACL
      * attention at the same time (via the BioAssays).
-     * 
+     *
      * @param object we are checking
      * @param property of the object
      * @return true if the association should be followed (even though it might not be based on cascade status)
@@ -342,7 +342,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * For cases in which the object is not a SecuredChild, but we still want to erase ACEs on it when it has a parent.
      * Implementers will check the class of the object, and the class of the parent (e.g. using <code>Class.forName(
      * parentAcl.getObjectIdentity().getType() )</code>) and decide what to do.
-     * 
+     *
      * @param object
      * @param parentAcl
      * @return false if ACEs should be retained. True if ACEs should be removed (if possible).
@@ -355,7 +355,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * Certain objects are not made public immediately on creation by administrators. The default implementation returns
      * true if clazz is assignable to SecuredChild; otherwise false. Subclasses overriding this method should probably
      * call super.specialCaseToKeepPrivateOnCreation()
-     * 
+     *
      * @param clazz
      * @return true if it's a special case to be kept private on creation.
      */
@@ -371,7 +371,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * Creates the Acl object.
-     * 
+     *
      * @param acl If non-null we're in update mode, possibly setting the parent.
      * @param object The domain object.
      * @param parentAcl can be null
@@ -390,27 +390,41 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
         boolean create = false;
         if ( acl == null ) {
             // usually create, but could be update.
-            try {
-                // this is probably redundant. We shouldn't have ACLs already.
-                acl = ( MutableAcl ) getAclService().readAclById( oi ); // throws exception if not found
+            //   try {
+            // this is probably redundant. We shouldn't have ACLs already.
+            acl = ( MutableAcl ) getAclService().readAclById( oi );
+
+            if ( acl == null ) {
+                acl = getAclService().createAcl( oi );
+                create = true;
+                assert acl != null;
+                assert acl.getOwner() != null;
+            } else {
+
                 /*
-                 * If we get here, we're in update mode after all. Could be findOrCreate, or could be a second pass that
-                 * will let us fill in parent ACLs for associated objects missed earlier in a persist cycle. E.g.
-                 * BioMaterial
+                 * If we get here, we're in update mode after all. Could be findOrCreate, or could be a second pass
+                 * that will let us fill in parent ACLs for associated objects missed earlier in a persist cycle.
+                 * E.g. BioMaterial
                  */
+
                 try {
+                    log.info( "ACL found; Checking if parent object ACL needs to be set" );
                     maybeSetParentACL( object, acl, parentAcl );
                     return acl;
                 } catch ( NotFoundException nfe ) {
                     log.error( nfe, nfe );
                 }
-            } catch ( NotFoundException nfe ) {
-                // the current user will be the owner.
-                acl = getAclService().createAcl( oi );
-                create = true;
-                assert acl != null;
-                assert acl.getOwner() != null;
             }
+            //   }
+            //            catch ( NotFoundException nfe ) {
+            //                //  7/2018 should no longer be reachable
+            //                // create the missing ACL.
+            //                // the current user will be the owner.
+            //                acl = getAclService().createAcl( oi );
+            //                create = true;
+            //                assert acl != null;
+            //                assert acl.getOwner() != null;
+            //            }
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -468,8 +482,9 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
             }
 
         } else {
-            assert !acl.getEntries().isEmpty() || ( parentAcl != null && !parentAcl.getEntries().isEmpty() ) : "Failed to get valid ace for acl or parents: "
-                    + acl + " parent=" + parentAcl;
+            assert !acl.getEntries().isEmpty()
+                    || ( parentAcl != null && !parentAcl.getEntries().isEmpty() ) : "Failed to get valid ace for acl or parents: "
+                            + acl + " parent=" + parentAcl;
         }
 
         /*
@@ -543,7 +558,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * <p>
      * If the object is a SecuredNotChild, then it will be treated as the parent. For example, ArrayDesigns associated
      * with an Experiment has 'parent status' for securables associated with the AD, such as LocalFiles.
-     * 
+     *
      * @param object
      * @param previousParent
      * @return
@@ -569,7 +584,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * Delete acl permissions for an object.
-     * 
+     *
      * @param object
      * @throws IllegalArgumentException
      * @throws DataAccessException
@@ -623,7 +638,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * Add ACE granting permission to sid to ACL (does not persist the change, you have to call update!)
-     * 
+     *
      * @param acl which object
      * @param permission which permission
      * @param sid which principal
@@ -649,7 +664,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * Recursively locate the actual secured parent.
-     * 
+     *
      * @param s
      * @return
      */
@@ -674,7 +689,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * <p>
      * Before deleting anything, we check that the ACEs on the child are exactly equivalent to the ones on the parent.
      * If they aren't, it implies the child was not correctly synchronized with the parent in the first place.
-     * 
+     *
      * @param object
      * @param parentAcl -- careful with the order!
      * @param acl
@@ -738,7 +753,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
             /*
              * This should often be an error condition. The child should typically have the same permissions as the
              * parent, if they are out of synch that's a special situation.
-             * 
+             *
              * For example: a differential expression analysis should not be public when the experiment is private. That
              * won't work!
              */
@@ -757,7 +772,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
      * like BioAssays.
      * <p>
      * Be careful with the argument order!
-     * 
+     *
      * @param object
      * @param acl - the potential child
      * @param parentAcl - the potential parent
@@ -793,7 +808,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * Do necessary ACL operations on the object.
-     * 
+     *
      * @param o
      * @param methodName
      * @param isUpdate
@@ -821,7 +836,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     /**
      * Walk the tree of associations and add (or update) acls.
-     * 
+     *
      * @param methodName method name
      * @param object
      * @param previousParent The parent ACL of the given object (if it is a Securable) or of the last visited Securable.
@@ -954,7 +969,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
     /**
      * Kick off an update. This is executed when we call fooService.update(s). The basic issue is to add permissions for
      * any <em>new</em> associated objects.
-     * 
+     *
      * @param m the update method
      * @param s the securable being updated.
      */

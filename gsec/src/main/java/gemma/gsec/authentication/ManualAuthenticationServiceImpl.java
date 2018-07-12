@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2006-2010 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,7 @@ import org.springframework.stereotype.Component;
 /**
  * Process authentication requests that come from outside a web context. This is used for command line interfaces, for
  * example.
- * 
+ *
  * @author keshav
  * @version $Id: ManualAuthenticationServiceImpl.java,v 1.5 2013/09/22 18:50:42 paul Exp $
  */
@@ -74,7 +74,7 @@ public class ManualAuthenticationServiceImpl implements ApplicationContextAware,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.security.authentication.ManualAuthenticationService#attemptAuthentication(java.lang.String,
      * java.lang.String)
      */
@@ -96,7 +96,7 @@ public class ManualAuthenticationServiceImpl implements ApplicationContextAware,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.security.authentication.ManualAuthenticationService#authenticateAnonymously()
      */
     @Override
@@ -106,7 +106,7 @@ public class ManualAuthenticationServiceImpl implements ApplicationContextAware,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * ubic.gemma.security.authentication.ManualAuthenticationService#setApplicationContext(org.springframework.context
      * .ApplicationContext)
@@ -119,7 +119,7 @@ public class ManualAuthenticationServiceImpl implements ApplicationContextAware,
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see ubic.gemma.security.authentication.ManualAuthenticationService#validateRequest(java.lang.String,
      * java.lang.String)
      */

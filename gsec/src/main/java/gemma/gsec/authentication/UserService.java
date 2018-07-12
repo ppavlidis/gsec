@@ -1,8 +1,8 @@
 /*
  * The Gemma project.
- * 
+ *
  * Copyright (c) 2006-2007 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,14 +18,14 @@
  */
 package gemma.gsec.authentication;
 
-import gemma.gsec.model.GroupAuthority;
-import gemma.gsec.model.User;
-import gemma.gsec.model.UserGroup;
-
 import java.util.Collection;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import gemma.gsec.model.GroupAuthority;
+import gemma.gsec.model.User;
+import gemma.gsec.model.UserGroup;
 
 /**
  * @version $Id: UserService.java,v 1.6 2014/06/17 19:20:47 paul Exp $
@@ -44,7 +44,7 @@ public interface UserService {
      * @param user
      * @param group
      */
-    @Secured({ "GROUP_USER", "ACL_SECURABLE_EDIT" /* this applies to the first arg only! - should use an expression */})
+    @Secured({ "GROUP_USER", "ACL_SECURABLE_EDIT" /* this applies to the first arg only! - should use an expression */ })
     public void addUserToGroup( UserGroup group, User user );
 
     /**
@@ -64,7 +64,7 @@ public interface UserService {
 
     /**
      * Remove a user from the persistent store.
-     * 
+     *
      * @param user
      */
     @Secured({ "GROUP_ADMIN" })
@@ -72,14 +72,14 @@ public interface UserService {
 
     /**
      * Remove a group from the persistent store
-     * 
+     *
      * @param group
      */
     @Secured({ "GROUP_USER", "ACL_SECURABLE_EDIT" })
     public void delete( UserGroup group );
 
     /**
-     * 
+     *
      */
     @Secured({ "GROUP_USER", "AFTER_ACL_READ" })
     public User findByEmail( java.lang.String email );
@@ -99,15 +99,15 @@ public interface UserService {
     @Secured({ "GROUP_USER", "AFTER_ACL_READ" })
     public UserGroup findGroupByName( String name );
 
-    @Secured("GROUP_USER")
-    public boolean groupExists( String name );
-
     /**
      * @param usernName
      * @return
      */
     @Secured({ "GROUP_USER", "AFTER_ACL_COLLECTION_READ" })
     public Collection<UserGroup> findGroupsForUser( User user );
+
+    @Secured("GROUP_USER")
+    public boolean groupExists( String name );
 
     /**
      * A list of groups available to the current user (will be security-filtered)...might need to allow anonymous.
@@ -136,7 +136,7 @@ public interface UserService {
 
     /**
      * Remove an authority from a group. Would rarely be used.
-     * 
+     *
      * @param group
      * @param authority
      */

@@ -1,8 +1,8 @@
 /*
  * The gemma-mda project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,19 +21,19 @@ package gemma.gsec.acl.domain;
 
 import java.io.Serializable;
 
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-
 import org.springframework.security.acls.domain.AclAuthorizationStrategy;
 import org.springframework.security.acls.model.MutableAcl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.util.FieldUtils;
 import org.springframework.util.Assert;
 
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+
 /**
  * based on the spring-security AclCache.
- * 
+ *
  * @author Paul
  * @version $Id: AclCache.java,v 1.1 2013/09/14 16:55:19 paul Exp $
  */

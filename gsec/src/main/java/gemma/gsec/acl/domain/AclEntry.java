@@ -1,8 +1,8 @@
 /*
  * The Gemma project.
- * 
+ *
  * Copyright (c) 2006-2012 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,7 @@ import org.springframework.util.Assert;
 
 /**
  * Models the acl entry
- * 
+ *
  * @author paul
  */
 public class AclEntry implements AccessControlEntry, Comparable<AclEntry> {
@@ -108,10 +108,10 @@ public class AclEntry implements AccessControlEntry, Comparable<AclEntry> {
 
     /*
      * Note that this does not use the ID, to avoid getting duplicate entries.
-     * 
-     * 
+     *
+     *
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -135,7 +135,7 @@ public class AclEntry implements AccessControlEntry, Comparable<AclEntry> {
     }
 
     /**
-     * 
+     *
      */
     public Integer getAceOrder() {
         return this.aceOrder;
@@ -147,14 +147,14 @@ public class AclEntry implements AccessControlEntry, Comparable<AclEntry> {
     }
 
     /**
-     * 
+     *
      */
     public java.lang.Boolean getGranting() {
         return this.granting;
     }
 
     /**
-     * 
+     *
      */
     @Override
     public Long getId() {
@@ -162,7 +162,7 @@ public class AclEntry implements AccessControlEntry, Comparable<AclEntry> {
     }
 
     /**
-     * 
+     *
      */
     public Integer getMask() {
         return this.mask;
@@ -174,7 +174,7 @@ public class AclEntry implements AccessControlEntry, Comparable<AclEntry> {
     }
 
     /**
-     * 
+     *
      */
     @Override
     public Sid getSid() {
@@ -183,9 +183,9 @@ public class AclEntry implements AccessControlEntry, Comparable<AclEntry> {
 
     /*
      * Note that this does not use the ID, to avoid getting duplicate entries.
-     * 
+     *
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#hashCode()
      */
     @Override

@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2006 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,6 @@
  */
 package gemma.gsec.authentication;
 
-import gemma.gsec.model.User;
-
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,22 +25,24 @@ import java.util.HashSet;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import gemma.gsec.model.User;
+
 /**
  * Implementation for Spring Security.
- * 
+ *
  * @author pavlidis
  * @version $Id: UserDetailsImpl.java,v 1.5 2014/05/29 02:11:59 ptan Exp $
  */
 public class UserDetailsImpl implements UserDetails {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = 1650537135541038216L;
 
     private String email;
     private Boolean enabled;
-    private Collection<GrantedAuthority> grantedAuthorities = new HashSet<GrantedAuthority>();
+    private Collection<GrantedAuthority> grantedAuthorities = new HashSet<>();
 
     private String password;
 
@@ -90,7 +90,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetails#getAuthorities()
      */
     @Override
@@ -107,7 +107,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetails#getPassword()
      */
     @Override
@@ -131,7 +131,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetails#getUsername()
      */
     @Override
@@ -141,7 +141,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetails#isAccountNonExpired()
      */
     @Override
@@ -151,7 +151,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetails#isAccountNonLocked()
      */
     @Override
@@ -161,7 +161,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetails#isCredentialsNonExpired()
      */
     @Override
@@ -171,7 +171,7 @@ public class UserDetailsImpl implements UserDetails {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetails#isEnabled()
      */
     @Override

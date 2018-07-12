@@ -1,8 +1,8 @@
 /*
  * The gsec project
- * 
+ *
  * Copyright (c) 2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,10 +18,6 @@
  */
 
 package gemma.gsec.acl.afterinvocation;
-
-import gemma.gsec.SecurityService;
-import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
-import gemma.gsec.model.Securable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,10 +35,14 @@ import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
 
+import gemma.gsec.SecurityService;
+import gemma.gsec.acl.ValueObjectAwareIdentityRetrievalStrategyImpl;
+import gemma.gsec.model.Securable;
+
 /**
  * Overrides the functionality of the spring-provided AclEntryAfterInvocationCollectionFilteringProvider to be more
  * efficient with large collections.
- * 
+ *
  * @author Paul
  * @version $Id$
  */
@@ -77,9 +77,9 @@ public class AclEntryAfterInvocationCollectionFilteringProvider<A extends Secura
             Filterer<A> filterer;
 
             if ( returnedObject instanceof Collection ) {
-                filterer = new CollectionFilterer<A>( ( Collection<A> ) returnedObject );
+                filterer = new CollectionFilterer<>( ( Collection<A> ) returnedObject );
             } else if ( returnedObject.getClass().isArray() ) {
-                filterer = new ArrayFilterer<A>( ( A[] ) returnedObject );
+                filterer = new ArrayFilterer<>( ( A[] ) returnedObject );
             } else {
                 throw new AuthorizationServiceException( "A Collection or an array (or null) was required as the "
                         + "returnedObject, but the returnedObject was: " + returnedObject );
@@ -90,7 +90,7 @@ public class AclEntryAfterInvocationCollectionFilteringProvider<A extends Secura
             /*
              * Collect up the securables
              */
-            List<Securable> domainObjects = new ArrayList<Securable>();
+            List<Securable> domainObjects = new ArrayList<>();
             for ( Object domainObject : filterer ) {
                 if ( !Securable.class.isAssignableFrom( domainObject.getClass() ) ) {
                     continue;

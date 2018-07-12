@@ -1,8 +1,8 @@
 /*
  * The Gemma_sec1 project
- * 
+ *
  * Copyright (c) 2009 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,7 +26,7 @@ import org.springframework.security.acls.model.AuditableAccessControlEntry;
 
 /**
  * Wire into the {@link org.springframework.security.acls.jdbc.LookupStrategy} to enable logging of object access.
- * 
+ *
  * @author paul
  * @version $Id: AclAuditLogger.java,v 1.1 2013/09/14 16:55:18 paul Exp $
  * @see org.springframework.security.acls.jdbc.LookupStrategy

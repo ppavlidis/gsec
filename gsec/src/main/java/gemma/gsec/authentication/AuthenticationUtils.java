@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2006 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,8 +18,6 @@
  */
 package gemma.gsec.authentication;
 
-import gemma.gsec.AuthorityConstants;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +30,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import gemma.gsec.AuthorityConstants;
+
 /**
  * Common methods for authenticating users.
- * 
+ *
  * @author pavlidis
  * @version $Id: AuthenticationUtils.java,v 1.7 2013/09/21 15:10:54 paul Exp $
  */
@@ -45,12 +45,12 @@ public class AuthenticationUtils {
 
     /**
      * This is only needed for situations outside the web context.
-     * 
+     *
      * @param manager
      */
     public static void anonymousAuthenticate( AuthenticationManager manager ) {
         log.debug( "No authentication object in context, providing anonymous authentication" );
-        List<GrantedAuthority> gas = new ArrayList<GrantedAuthority>();
+        List<GrantedAuthority> gas = new ArrayList<>();
 
         /*
          * "GROUP_ANONYMOUS" is defined in applicationContext-springSecurity.
