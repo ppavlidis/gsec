@@ -283,14 +283,8 @@ public class AclServiceImpl implements AclService {
                 /*
                  * This can happen when objects or new (normal) or if we request an object that was deleted and we ask
                  * for it again (cache out of sync, etc.). Rather than throwing an exception we just silently continue.
-                 * In effect, no access can be granted to objects that lack ACLs. We may change this behaviour to return
-                 * a null value in the result map, which makes it more explicit to the caller.
                  */
-                // throw new NotFoundException( "No ACL for '" + key + "'" );
-                log.warn( "No ACL for '" + key + "'" );
             }
-
-            // assert result.get( key ) != null;
         }
 
         return result;
