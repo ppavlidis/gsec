@@ -616,6 +616,9 @@ public class SecurityServiceImpl implements SecurityService {
 
         for ( ObjectIdentity oi : acls.keySet() ) {
             Acl a = acls.get( oi );
+            if ( a == null ) {
+                continue;
+            }
             Sid owner = a.getOwner();
             if ( owner == null )
                 result.put( objectIdentities.get( oi ), null );
@@ -647,8 +650,6 @@ public class SecurityServiceImpl implements SecurityService {
         Map<ObjectIdentity, Acl> acls = aclService
                 .readAclsById( new Vector<>( objectIdentities.keySet() ) );
 
-        assert !acls.isEmpty();
-
         List<Sid> sids = sidRetrievalStrategy.getSids( authentication );
 
         assert !sids.isEmpty();
@@ -657,6 +658,12 @@ public class SecurityServiceImpl implements SecurityService {
             // yes, we have to do it again.
             ObjectIdentity oi = objectIdentityRetrievalStrategy.getObjectIdentity( s );
             Acl acl = acls.get( oi );
+
+            if ( acl == null ) {
+                // no ACL, deny permission?
+                result.add( false );
+                continue;
+            }
 
             try {
                 boolean granted = acl.isGranted( requiredPermissions, sids, false );
