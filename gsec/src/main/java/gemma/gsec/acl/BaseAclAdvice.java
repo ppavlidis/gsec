@@ -389,12 +389,12 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
         boolean create = false;
         if ( acl == null ) {
-            // usually create, but could be update.
-            //   try {
-            // this is probably redundant. We shouldn't have ACLs already.
+            // usually create, but could be update, so we have to check in case the ACL is already present
             acl = ( MutableAcl ) getAclService().readAclById( oi );
 
             if ( acl == null ) {
+                // create the missing ACL
+                // the current user will be the owner.
                 acl = getAclService().createAcl( oi );
                 create = true;
                 assert acl != null;
@@ -406,25 +406,14 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
                  * that will let us fill in parent ACLs for associated objects missed earlier in a persist cycle.
                  * E.g. BioMaterial
                  */
-
                 try {
-                    log.info( "ACL found; Checking if parent object ACL needs to be set" );
+                    if ( log.isDebugEnabled() ) log.debug( "ACL found; Checking if parent object ACL needs to be set" );
                     maybeSetParentACL( object, acl, parentAcl );
                     return acl;
-                } catch ( NotFoundException nfe ) {
+                } catch ( NotFoundException nfe ) { // FIXME is this exception thrown?
                     log.error( nfe, nfe );
                 }
             }
-            //   }
-            //            catch ( NotFoundException nfe ) {
-            //                //  7/2018 should no longer be reachable
-            //                // create the missing ACL.
-            //                // the current user will be the owner.
-            //                acl = getAclService().createAcl( oi );
-            //                create = true;
-            //                assert acl != null;
-            //                assert acl.getOwner() != null;
-            //            }
         }
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -608,12 +597,7 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
 
     private final MutableAcl getAcl( Securable s ) {
         ObjectIdentity oi = objectIdentityRetrievalStrategy.getObjectIdentity( s );
-
-        try {
-            return ( MutableAcl ) getAclService().readAclById( oi );
-        } catch ( NotFoundException e ) {
-            return null;
-        }
+        return ( MutableAcl ) getAclService().readAclById( oi );
     }
 
     /**
@@ -981,21 +965,18 @@ public abstract class BaseAclAdvice implements InitializingBean, BeanFactoryAwar
         assert oi != null;
         MutableAcl acl = null;
         Acl parentAcl = null;
-        try {
-            acl = ( MutableAcl ) getAclService().readAclById( oi );
-            assert acl != null;
-            parentAcl = acl.getParentAcl(); // can be null.
-        } catch ( NotFoundException nfe ) {
-            /*
-             * This really should be an error.
-             */
 
+        acl = ( MutableAcl ) getAclService().readAclById( oi );
+
+        if ( acl == null ) {
             /*
              * Then, this shouldn't be an update.
              */
-            log.warn( "On 'update' methods, there should be a ACL on the passed object already. Method=" + m + " on "
+            throw new NotFoundException( "On 'update' methods, there should be a ACL on the passed object already. Method=" + m + " on "
                     + s );
         }
+
+        parentAcl = acl.getParentAcl(); // can be null.
 
         addOrUpdateAcl( acl, s, parentAcl );
         processAssociations( m, s, parentAcl );

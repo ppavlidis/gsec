@@ -340,11 +340,8 @@ public class SecurityServiceImpl implements SecurityService {
     public MutableAcl getAcl( Securable s ) {
         ObjectIdentity oi = objectIdentityRetrievalStrategy.getObjectIdentity( s );
 
-        try {
-            return ( MutableAcl ) aclService.readAclById( oi );
-        } catch ( NotFoundException e ) {
-            return null;
-        }
+        return ( MutableAcl ) aclService.readAclById( oi );
+
     }
 
     /*
@@ -710,16 +707,11 @@ public class SecurityServiceImpl implements SecurityService {
 
         for ( ObjectIdentity oi : acls.keySet() ) {
             Acl acl = acls.get( oi );
-
-            try {
-                boolean granted = acl.isGranted( requiredPermissions, sids, false );
-
-                result.put( objectIdentities.get( oi ), granted );
-            } catch ( NotFoundException ignore ) { // this won't happen?
-                /*
-                 * The user is anonymous.
-                 */
+            if ( acl == null ) {
                 result.put( objectIdentities.get( oi ), false );
+            } else {
+                boolean granted = acl.isGranted( requiredPermissions, sids, false );
+                result.put( objectIdentities.get( oi ), granted );
             }
         }
         return result;
@@ -743,14 +735,12 @@ public class SecurityServiceImpl implements SecurityService {
 
         ObjectIdentity objectIdentity = objectIdentityRetrievalStrategy.getObjectIdentity( svo );
 
-        try {
-            // Lookup only ACLs for SIDs we're interested in (this actually get them all)
-            acl = aclService.readAclById( objectIdentity, sids );
-            // administrative mode = false
-            return acl.isGranted( requiredPermissions, sids, false );
-        } catch ( NotFoundException ignore ) {
-            return false;
-        }
+        // Lookup only ACLs for SIDs we're interested in (this actually get them all)
+        acl = aclService.readAclById( objectIdentity, sids );
+        // administrative mode = false
+        if ( acl == null ) return false;
+        return acl.isGranted( requiredPermissions, sids, false );
+
     }
 
     /*
@@ -827,59 +817,56 @@ public class SecurityServiceImpl implements SecurityService {
     public boolean isOwnedByCurrentUser( Securable s ) {
         ObjectIdentity oi = objectIdentityRetrievalStrategy.getObjectIdentity( s );
 
-        try {
-            Acl acl = this.aclService.readAclById( oi );
+        Acl acl = this.aclService.readAclById( oi );
 
-            Sid owner = acl.getOwner();
-            if ( owner == null ) return false;
+        if ( acl == null ) return false;
 
-            /*
-             * Special case: if we're the administrator, and the owner of the data is GROUP_ADMIN, we are considered the
-             * owner.
-             */
-            if ( owner instanceof AclGrantedAuthoritySid
-                    && SecurityUtil.isUserAdmin()
-                    && ( ( AclGrantedAuthoritySid ) owner ).getGrantedAuthority().equals(
-                            AuthorityConstants.ADMIN_GROUP_AUTHORITY ) ) {
+        Sid owner = acl.getOwner();
+        if ( owner == null ) return false;
+
+        /*
+         * Special case: if we're the administrator, and the owner of the data is GROUP_ADMIN, we are considered the
+         * owner.
+         */
+        if ( owner instanceof AclGrantedAuthoritySid
+                && SecurityUtil.isUserAdmin()
+                && ( ( AclGrantedAuthoritySid ) owner ).getGrantedAuthority().equals(
+                        AuthorityConstants.ADMIN_GROUP_AUTHORITY ) ) {
+            return true;
+        }
+
+        if ( owner instanceof AclPrincipalSid ) {
+            String ownerName = ( ( AclPrincipalSid ) owner ).getPrincipal();
+
+            if ( ownerName.equals( userManager.getCurrentUsername() ) ) {
                 return true;
             }
 
-            if ( owner instanceof AclPrincipalSid ) {
-                String ownerName = ( ( AclPrincipalSid ) owner ).getPrincipal();
-
-                if ( ownerName.equals( userManager.getCurrentUsername() ) ) {
-                    return true;
-                }
-
-                /*
-                 * Special case: if the owner is an administrator, and we're an administrator, we are considered the
-                 * owner. Note that the intention is that usually the owner would be a GrantedAuthority (see last case,
-                 * below), not a Principal, but this hasn't always been instituted.
-                 */
-                if ( SecurityUtil.isUserAdmin() ) {
-                    try {
-                        Collection<? extends GrantedAuthority> authorities = userManager.loadUserByUsername( ownerName )
-                                .getAuthorities();
-                        for ( GrantedAuthority grantedAuthority : authorities ) {
-                            if ( grantedAuthority.getAuthority().equals( AuthorityConstants.ADMIN_GROUP_AUTHORITY ) ) {
-                                return true;
-                            }
+            /*
+             * Special case: if the owner is an administrator, and we're an administrator, we are considered the
+             * owner. Note that the intention is that usually the owner would be a GrantedAuthority (see last case,
+             * below), not a Principal, but this hasn't always been instituted.
+             */
+            if ( SecurityUtil.isUserAdmin() ) {
+                try {
+                    Collection<? extends GrantedAuthority> authorities = userManager.loadUserByUsername( ownerName )
+                            .getAuthorities();
+                    for ( GrantedAuthority grantedAuthority : authorities ) {
+                        if ( grantedAuthority.getAuthority().equals( AuthorityConstants.ADMIN_GROUP_AUTHORITY ) ) {
+                            return true;
                         }
-                    } catch ( UsernameNotFoundException e ) {
-                        log.warn( "Owner " + ownerName + " could not be retrieved to check role: " + e.getMessage() );
-                        return false;
                     }
-
+                } catch ( UsernameNotFoundException e ) {
+                    log.warn( "Owner " + ownerName + " could not be retrieved to check role: " + e.getMessage() );
                     return false;
                 }
 
+                return false;
             }
 
-            return false;
-
-        } catch ( NotFoundException nfe ) {
-            return false;
         }
+
+        return false;
 
     }
 
@@ -916,15 +903,12 @@ public class SecurityServiceImpl implements SecurityService {
          * Note: in theory, it should pay attention to the sid we ask for and return nothing if there is no acl.
          * However, the implementation actually ignores the sid argument.
          */
-        try {
-            Acl acl = this.aclService.readAclById( oi, sids );
+        Acl acl = this.aclService.readAclById( oi, sids );
 
-            assert acl != null;
+        if ( acl == null ) return true;
 
-            return SecurityUtil.isPrivate( acl );
-        } catch ( NotFoundException nfe ) {
-            return true;
-        }
+        return SecurityUtil.isPrivate( acl );
+
     }
 
     /*
@@ -982,13 +966,10 @@ public class SecurityServiceImpl implements SecurityService {
          * Note: in theory, it should pay attention to the sid we ask for and return nothing if there is no acl.
          * However, the implementation actually ignores the sid argument. See BasicLookupStrategy
          */
-        try {
-            Acl acl = this.aclService.readAclById( oi );
+        Acl acl = this.aclService.readAclById( oi );
+        if ( acl == null ) return true;
+        return SecurityUtil.isShared( acl );
 
-            return SecurityUtil.isShared( acl );
-        } catch ( NotFoundException nfe ) {
-            return true;
-        }
     }
 
     /*
@@ -1402,9 +1383,8 @@ public class SecurityServiceImpl implements SecurityService {
 
         for ( ObjectIdentity oi : acls.keySet() ) {
             Acl a = acls.get( oi );
-            try {
+            if ( a != null ) {
                 result.put( objectIdentities.get( oi ), a.isGranted( requiredPermissions, sids, true ) );
-            } catch ( NotFoundException ignore ) {
             }
         }
         return result;
@@ -1428,14 +1408,13 @@ public class SecurityServiceImpl implements SecurityService {
             sids.add( sid );
         }
 
-        try {
-            // Lookup only ACLs for SIDs we're interested in (this actually get them all)
-            Acl acl = aclService.readAclById( objectIdentity, sids );
-            // administrative mode = true
-            return acl.isGranted( requiredPermissions, sids, true );
-        } catch ( NotFoundException ignore ) {
-            return false;
-        }
+        // Lookup only ACLs for SIDs we're interested in (this actually get them all)
+        Acl acl = aclService.readAclById( objectIdentity, sids );
+
+        if ( acl == null ) return false;
+
+        // administrative mode = true
+        return acl.isGranted( requiredPermissions, sids, true );
 
     }
 
@@ -1455,13 +1434,11 @@ public class SecurityServiceImpl implements SecurityService {
 
         Acl acl = null;
 
-        try {
-            acl = aclService.readAclById( objectIdentity, sids );
-            // administrative mode = true
-            return acl.isGranted( requiredPermissions, sids, true );
-        } catch ( NotFoundException ignore ) {
-            return false;
-        }
+        acl = aclService.readAclById( objectIdentity, sids );
+        if ( acl == null ) return false;
+        // administrative mode = true
+        return acl.isGranted( requiredPermissions, sids, true );
+
     }
 
     private <T extends Securable> void populateGroupsEditableBy( Map<T, Collection<String>> result, String groupName,

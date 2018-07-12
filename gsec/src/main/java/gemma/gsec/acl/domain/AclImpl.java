@@ -240,7 +240,7 @@ public class AclImpl implements OwnershipAcl {
      *        will be undertaken
      * @return <code>true</code> if one of the permissions has been granted, <code>false</code> if one of the
      *         permissions has been specifically revoked
-     * @throws NotFoundException if an exact ACE for one of the permission bit masks and SID combination could not be
+     * @return false if an exact ACE for one of the permission bit masks and SID combination could not be
      *         found
      * @throws UnloadedSidException if the passed SIDs are unknown to this ACL because the ACL was only loaded for a
      *         subset of SIDs
@@ -308,10 +308,12 @@ public class AclImpl implements OwnershipAcl {
             // We have a parent, so let them try to find a matching ACE
             return parentAcl.isGranted( permission, sids, false );
         }
-        // We either have no parent, or we're the uppermost parent; this can be expected.
-        throw new NotFoundException( "Unable to locate a matching ACE for passed permissions and SIDs: " + this
-                + "\nPermissions: " + StringUtils.join( permission, "," ) + "\nSIDs: " + StringUtils.join( sids, "," ) );
 
+        // We either have no parent, or we're the uppermost parent; this can be expected.
+        //        throw new NotFoundException( "Unable to locate a matching ACE for passed permissions and SIDs: " + this
+        //                + "\nPermissions: " + StringUtils.join( permission, "," ) + "\nSIDs: " + StringUtils.join( sids, "," ) );
+        //
+        return false;
     }
 
     @Override

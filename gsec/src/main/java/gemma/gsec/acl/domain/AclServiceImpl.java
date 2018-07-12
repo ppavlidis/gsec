@@ -260,6 +260,9 @@ public class AclServiceImpl implements AclService {
     }
 
     /**
+     * Note that this method does not throw a NotFoundException when one or more ACLs are not found. Instead the results
+     * will simply not contain the ACL; the caller has to do a null check.
+     * 
      * @param objects
      * @param sids
      * @return

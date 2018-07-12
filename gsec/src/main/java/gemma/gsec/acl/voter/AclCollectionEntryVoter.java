@@ -212,14 +212,12 @@ public class AclCollectionEntryVoter extends AbstractAclVoter {
 
                 Acl acl;
 
-                try {
-                    // Lookup only ACLs for SIDs we're interested in
-                    acl = aclService.readAclById( objectIdentity, sids );
-                } catch ( NotFoundException nfe ) {
+                // Lookup only ACLs for SIDs we're interested in
+                acl = aclService.readAclById( objectIdentity, sids );
+                if ( acl == null ) {
                     if ( logger.isDebugEnabled() ) {
                         logger.debug( "Voting to deny access - no ACLs apply for this principal: " + domainObject );
                     }
-
                     return ACCESS_DENIED;
                 }
 
