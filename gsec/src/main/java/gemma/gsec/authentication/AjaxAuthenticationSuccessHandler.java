@@ -32,7 +32,7 @@ import gemma.gsec.util.SecurityUtil;
  * Strategy used to handle a successful user authentication if it is a ajax style login (ajaxLoginTrue parameter = true)
  * then no redirect happens and a some JSON is sent to the client if the request is not ajax-style then the default
  * redirection takes place
- * 
+ *
  * <p>
  * This is in gemma-core because configuration takes place in applicationContext-security.xml
  *

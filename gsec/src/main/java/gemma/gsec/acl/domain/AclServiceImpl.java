@@ -1,8 +1,8 @@
 /*
  * The Gemma project
- * 
+ *
  * Copyright (c) 2010-2013 University of British Columbia
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,7 +75,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.MutableAclService#createAcl(org.springframework.security.acls.model.
      * ObjectIdentity)
      */
@@ -110,7 +110,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.MutableAclService#deleteAcl(org.springframework.security.acls.model.
      * ObjectIdentity, boolean)
      */
@@ -123,7 +123,7 @@ public class AclServiceImpl implements AclService {
 
     /**
      * Remove a sid and all associated ACEs.
-     * 
+     *
      * @param sid
      */
     @Override
@@ -154,7 +154,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see
      * org.springframework.security.acls.model.AclService#readAclById(org.springframework.security.acls.model.
      * ObjectIdentity
@@ -173,7 +173,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.AclService#readAclsById(java.util.List)
      */
     @Override
@@ -183,7 +183,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.AclService#readAclsById(java.util.List, java.util.List)
      */
     @Override
@@ -208,7 +208,7 @@ public class AclServiceImpl implements AclService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.acls.model.MutableAclService#updateAcl(org.springframework.security.acls.model.
      * MutableAcl)
      */
@@ -229,19 +229,8 @@ public class AclServiceImpl implements AclService {
     }
 
     /**
-     * @param acl
-     * @return
-     */
-    private MutableAcl doUpdateAcl( MutableAcl acl ) {
-        assert TransactionSynchronizationManager.isActualTransactionActive();
-        Assert.notNull( acl.getId(), "Object Identity doesn't provide an identifier" );
-        aclDao.update( acl );
-        return acl;
-    }
-
-    /**
      * Persist
-     * 
+     *
      * @param object
      * @param owner
      * @return persistent objectIdentity (will be an AclObjectIdentity)
@@ -254,7 +243,7 @@ public class AclServiceImpl implements AclService {
 
     /**
      * Retrieves the primary key from acl_sid, creating a new row if needed and the allowCreate property is true.
-     * 
+     *
      * @param sid to find or create
      * @param allowCreate true if creation is permitted if not found
      * @return the primary key or null if not found
@@ -293,6 +282,17 @@ public class AclServiceImpl implements AclService {
         }
 
         return result;
+    }
+
+    /**
+     * @param acl
+     * @return
+     */
+    private MutableAcl doUpdateAcl( MutableAcl acl ) {
+        assert TransactionSynchronizationManager.isActualTransactionActive();
+        Assert.notNull( acl.getId(), "Object Identity doesn't provide an identifier" );
+        aclDao.update( acl );
+        return acl;
     }
 
     private ObjectIdentity find( ObjectIdentity oid ) {
