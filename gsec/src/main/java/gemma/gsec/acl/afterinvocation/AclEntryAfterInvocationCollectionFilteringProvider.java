@@ -104,10 +104,6 @@ public class AclEntryAfterInvocationCollectionFilteringProvider<A extends Secura
 
             filter( filterer, hasPerms );
 
-            if ( log.isInfoEnabled() && !hasPerms.isEmpty() && timer.getTime() > 20 * hasPerms.size() ) {
-                log.info( "Filter " + hasPerms.size() + " objects: " + timer.getTime() + "ms" );
-            }
-
             return filterer.getFilteredObject();
         }
 
