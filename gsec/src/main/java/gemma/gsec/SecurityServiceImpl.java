@@ -668,8 +668,6 @@ public class SecurityServiceImpl implements SecurityService {
                     acls.put( oi, null );
                 }
             }
-
-            return result;
         }
 
         assert !acls.isEmpty();
